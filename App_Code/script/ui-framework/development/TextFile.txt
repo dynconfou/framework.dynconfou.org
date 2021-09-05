@@ -1,0 +1,1567 @@
+﻿/* 
+	DCF JS Framework - sia@dynconfou.org
+	Build: b09052021-12:45
+*/
+
+/** editable per application use : begin **/
+var appSettings = {
+    /* error logging domains only : blank [] */
+    eld: ['tomorrow', 'dev.']
+}
+
+
+/* Class object : option for classes */
+var ob_DcfCss = function() {
+    var _t = this;
+
+    var _private = {
+        classes: [{
+            n: 'required',
+            wd: '.required'
+        }, {
+            n: 'error',
+            wd: '.error'
+        }, {
+            n: 'disabled',
+            wd: '.action-disabled'
+        }, {
+            n: 'hidden',
+            wd: '.hidden'
+        }]
+    }
+
+    for (i1 = 0; i1 < _private.classes.length; i1++) {
+        _t[_private.classes[i1].n] = {
+            wd: _private.classes[i1].wd,
+            wod: _private.classes[i1].wd.slice(1, _private.classes[i1].wd.length)
+        }
+    }
+};
+
+/* RegExp Object : option for validations */
+var ob_DcfRegExp = function() {
+    var _t = this;
+
+    var _private = {
+        types: [{
+            n: 'email',
+            pattern: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,8}(?:\.[a-z]{2})?)$/i
+        }, {
+            n: 'username',
+            pattern: /^.*(?=.{8,})(?=.*[a-zA-Z]).*$/
+        }, {
+            n: 'password',
+            pattern: /^.*(?=.{8,})(?=.*[a-zA-Z]).*$/
+            /*
+				^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$		        
+				^.*              : Start
+				(?=.{8,})        : Length
+				(?=.*[a-zA-Z])   : Letters
+				(?=.*\d)         : Digits
+				(?=.*[!#$%&? "]) : Special characters
+				.*$              : End	            
+	        */
+        }]
+    }
+
+    for (i2 = 0; i2 < _private.types.length; i2++) {
+        _t[_private.types[i2].n] = _private.types[i2].pattern;
+    }
+}
+
+/* delay object  */
+var obDelay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+/* editable per application use : end  */
+
+/* 	********************************************************************************************************************************************************************************** 	
+ */
+/* do not modify  */
+/*  
+ ********************************************************************************************************************************************************************************** 
+ */
+
+/* app assets */
+var _assets = {
+    appcontainer: 'body',
+    appclick: 'app-click',
+    appchange: 'app-change',
+    apprepeat: 'app-repeat',
+    apprepeatindex: 'app-repeat-index',
+    apprepeatname: 'app-repeat-name',
+    appdatarepeat: 'app-datarepeat',
+    appdataparent: 'app-dataparent',
+    appdataparentindex: 'app-dataparent-index',
+    appmodify: 'app-modify',
+    appmodifyvalue: 'app-modify-value',
+    appmodifyoptions: 'app-modify-options',
+    appuiitem: 'app-ui-item',
+    appuidf: 'app-ui-defaultvalue',
+    appuiid: 'app-ui-item-id',
+    appdatabind: 'app-databind',
+    repindex: '[$index]',
+    appvp: 'app-validation-pattern',
+    apppattern: 'pattern',
+    appvs: 'app-validation-show',
+    appvac: 'app-validation-addclass',
+    appvrc: 'app-validation-removeclass',
+    appautosize: 'app-autosize'
+}
+
+/* app error logging */
+var ob_DcfLogging = function() {
+    var _t = this;
+
+    var _fnInDomain = function(iData) {
+        var isInDomain = false;
+        switch (true) {
+            case (iData instanceof String):
+                if (window.location.href.indexOf(iData) != -1) {
+                    isInDomain = true;
+                }
+                break;
+            case (iData instanceof Array):
+                for (each in iData) {
+                    if (iData.hasOwnProperty(each)) {
+                        if (window.location.href.indexOf(iData[each]) != -1) {
+                            isInDomain = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            default:
+                isInDomain = false;
+                break;
+        }
+        return isInDomain;
+    };
+
+    _t.errorCount = 0;
+    _t.errors = [];
+
+    _t.global = {
+        errors: {
+            display: _fnInDomain(appSettings.eld),
+            save: _fnInDomain(appSettings.eld)
+        }
+    }
+    switch (_t.global.errors.display) {
+        case true:
+            window.onerror = function(msg, url, linenumber) {
+                switch (_t.global.errors.save) {
+                    case true:
+                        //console.log('obDcfLogging: future placement for ajax save (errors/debug)');
+                        break;
+                }
+                obDcfLogging.errorCount = (obDcfLogging.errorCount || 0) + 1;
+                switch (obDcfLogging.errorCount) {
+                    case 1:
+                        alert('Errors Found: please check console.  \n\nError Count:\ndcf.cache.get({name:"pageErrorCount"}} \n\nError Logs:\ndcf.cache.get({name:"pageErrors"})');
+                        break
+                }
+                //alert('Error: ' + msg + '\n\nURL: ' + url + '\n\nLine Number: ' + linenumber);
+                var newError = {};
+                newError = {
+                    error: msg,
+                    url: url,
+                    linenumber: linenumber
+                };
+                obDcfLogging.errors.push(newError);
+                dcf.cache.save({
+                    name: 'pageErrorCount',
+                    value: obDcfLogging.errorCount
+                })
+                dcf.cache.save({
+                    name: 'pageErrors',
+                    value: obDcfLogging.errors
+                });
+                console.group(msg);
+                console.log('URL:\n' + url);
+                console.log('Line Number:\n' + linenumber);
+                console.groupEnd();
+                return true;
+            }
+            break;
+    }
+}
+var obDcfLogging = new ob_DcfLogging()
+
+
+/* sess data object */
+var ob_DcfSessData = function() {
+    var _t = this;
+
+    var _fnSaveThis = function(iData) {
+        var obStringify = JSON.stringify(iData.thisValue);
+        sessionStorage[iData.thisName] = obStringify;
+    };
+
+    var _fnGetThis = function(iData) {
+        return (sessionStorage[iData.thisName] == undefined) ? '' : JSON.parse(sessionStorage[iData.thisName])
+    };
+
+    _t.saveThis = function(iData) {
+        _fnSaveThis(iData);
+    }
+    _t.getThis = function(iData) {
+        return _fnGetThis(iData);
+    };
+    _t.clearAll = function() {
+        sessionStorage.clear();
+    }
+    _t.clearItem = function(iData) {
+        sessionStorage.removeItem(iData);
+    }
+    return _t;
+};
+var obDcfSessData = new ob_DcfSessData();
+
+/* local data object */
+var ob_DcfLocalData = function() {
+    var _t = this;
+
+    var _fnSaveThis = function(iData) {
+        var obStringify = JSON.stringify(iData.thisValue);
+        localStorage[iData.thisName] = obStringify;
+    };
+
+    var _fnGetThis = function(iData) {
+        return (localStorage[iData.thisName] == undefined) ? '' : JSON.parse(localStorage[iData.thisName])
+    };
+
+    _t.saveThis = function(iData) {
+        _fnSaveThis(iData);
+    }
+    _t.getThis = function(iData) {
+        return _fnGetThis(iData);
+    };
+    _t.clearAll = function() {
+        localStorage.clear();
+    }
+    _t.clearItem = function(iData) {
+        localStorage.removeItem(iData);
+    }
+    return _t;
+};
+var obDcfLocalData = new ob_DcfLocalData();
+
+/* */
+var ob_DcfLoaded = function() {
+    var _t = this;
+
+    var _items = {
+        templates: [],
+        scripts: [],
+        objects: []
+    }
+
+    var _fnItems = function() {
+        return _items;
+    };
+
+    var _fnAddItem = function(iData) {
+        switch (iData.type) {
+            case 'template':
+                if (_items.templates.indexOf(iData.name) == -1) {
+                    _items.templates.push(iData.name);
+                }
+                break;
+            case 'script':
+                if (_items.scripts.indexOf(iData.name) == -1) {
+                    _items.scripts.push(iData.name);
+                    _items.objects.push('ob' + iData.name.split('-')[0][0].toUpperCase() + iData.name.split('-')[0].substring(1, iData.name.length));
+                }
+                break;
+        }
+    }
+
+    _t.items = function() {
+        return _fnItems();
+    }
+    _t.addItem = function(iData) {
+        _fnAddItem(iData);
+    };
+};
+var obDcfLoaded = new ob_DcfLoaded();
+
+/* require object */
+var ob_DcfRequire = function() {
+    var _t = this;
+
+    /* private loaditem & itemIDs - preset values for viewability */
+    var _private = {
+        loadItems: [],
+        loadItemIDs: {}
+    }
+    /* item assests - container viewability only */
+    _t.assets = {
+        /* item referenced to ob_Urls[components & controls] */
+        item: '',
+        /* params */
+        params: {
+            /* default value : blank - will not append */
+            appendTo: '',
+            /* default value : true - will cache template */
+            cache: '',
+            fnPreAppend: {
+                /* function to be executed prior to script append */
+                script: '',
+                /* function to be executed prior to template append */
+                template: ''
+            }
+        },
+        /* function to be executed on completion of all items retrieved - used with ".load" method : all item ids returned */
+        fnComplete: ''
+    }
+
+    var _fnRequire = function(iData) {
+        _t.assets.item = iData;
+    };
+
+    var _fnParams = function(iData) {
+        _t.assets.params = iData;
+    }
+
+    var _loadItems = function() {
+        /* set defaults if not supplied - begin */
+        _t.assets.params.appendTo = (_t.assets.params.appendTo || '');
+        _t.assets.params.cache = (_t.assets.params.cache || true);
+        /* set defaults if not supplied - end */
+        if (_private.loadItems.length > 0) {
+            switch (_private.loadItems[0].type) {
+                case 'template':
+                    /* creates template id */
+                    var templateID = _private.loadItems[0].item + '-' + _private.loadItems[0].uiType + '-' + _private.loadItems[0].type;
+                    /* check for previously loaded template in dom */
+                    switch ($(['#', templateID].join('')).length > 0) {
+                        /* template already in dom */
+                        case true:
+                            //console.log('obRequire: template("'+templateID+'") already in DOM');
+                            _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                            _private.loadItemIDs['templateID'] = templateID;
+                            obDcfLoaded.addItem({
+                                type: 'template',
+                                name: templateID
+                            });
+                            _loadItems();
+                            break;
+                            /* template required */
+                        default:
+                            /* check cache for template */
+                            switch (dcf.cache.get({
+                                name: templateID
+                            }) == '') {
+                                /* template not in cache */
+                                case true:
+                                    //console.log('obRequire: template("'+templateID+'") retrieved via AJAX');				        			
+                                    $.ajax({
+                                        //                                         url: [_private.loadItems[0].url, '?', (new Date()).getTime()].join(''),
+                                        url: [_private.loadItems[0].url].join(''),
+                                        success: function(data) {
+                                            var templateHTML = $(data).attr('id', templateID)
+                                            $(_t.assets.params.appendTo).append(templateHTML)
+                                            _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                                            _private.loadItemIDs['templateID'] = templateID;
+                                            switch (_t.assets.params.cache) {
+                                                case true:
+                                                    dcf.cache.save({
+                                                        name: templateID,
+                                                        value: templateHTML[0].outerHTML
+                                                    });
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            obDcfLoaded.addItem({
+                                                type: 'template',
+                                                name: templateID
+                                            });
+                                            _loadItems();
+                                        }
+                                    })
+                                    break;
+                                    /* template in cache */
+                                default:
+                                    //console.log('obRequire: template("'+templateID+'") retrieved via CACHE');
+                                    $(_t.assets.params.appendTo).append(dcf.cache.get({
+                                        name: templateID
+                                    }));
+                                    _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                                    _private.loadItemIDs['templateID'] = templateID;
+                                    obDcfLoaded.addItem({
+                                        type: 'template',
+                                        name: templateID
+                                    });
+                                    _loadItems();
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case 'script':
+                    /* creates scriptID */
+                    var scriptID = _private.loadItems[0].item + '-' + _private.loadItems[0].uiType + '-' + _private.loadItems[0].type;
+                    /* check for existing script */
+                    switch ($(['#', scriptID].join('')).length > 0) {
+                        /* script already loadod */
+                        case true:
+                            //console.log('obRequire: script("'+scriptID+'") already in DOM');
+                            _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                            _private.loadItemIDs['scriptID'] = scriptID;
+                            obDcfLoaded.addItem({
+                                type: 'script',
+                                name: scriptID
+                            });
+                            _loadItems();
+                            break;
+                        default:
+                            /* check cache for template */
+                            switch (dcf.cache.get({
+                                name: scriptID
+                            }) == '') {
+                                /* script not in cache*/
+                                case true:
+                                    //console.log('obRequire: script("'+scriptID+'") retrieved via AJAX');				        			
+                                    $.ajax({
+                                        //                                         url: [_private.loadItems[0].url, '?', (new Date()).getTime()].join(''),
+                                        url: [_private.loadItems[0].url].join(''),
+                                        //type: 'script',
+                                        success: function(data) {
+                                            var reqObject;
+                                            try {
+                                                /* loading js properly */
+                                                reqObject = eval('ob' + _t.assets.item[0].toUpperCase() + _t.assets.item.slice(1, _t.assets.item.length));
+                                                $((_t.assets.params.appendTo == '') ? 'body' : _t.assets.params.appendTo).append('<script id="' + scriptID + '" ><\/script>');
+                                            } catch (err) {
+                                                /* loading js by force - when not compiled by browser */
+                                                $((_t.assets.params.appendTo == '') ? 'body' : _t.assets.params.appendTo).append('<script id="' + scriptID + '" >' + data + '<\/script>');
+                                            }
+                                            _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                                            _private.loadItemIDs['scriptID'] = scriptID;
+                                            switch (_t.assets.params.cache) {
+                                                case true:
+                                                    dcf.cache.save({
+                                                        name: scriptID,
+                                                        value: data
+                                                    });
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            obDcfLoaded.addItem({
+                                                type: 'script',
+                                                name: scriptID
+                                            });
+                                            _loadItems();
+                                        }
+                                    })
+                                    break;
+                                    /* script in cache*/
+                                default:
+                                    //console.log('obRequire: script("'+scriptID+'") retrieved via SCRIPT');				        		
+                                    $((_t.assets.params.appendTo == '') ? 'body' : _t.assets.params.appendTo).append('<script id="' + scriptID + '" >' + dcf.cache.get({
+                                        name: scriptID
+                                    }) + '<\/script>')
+                                    _private.loadItems = _private.loadItems.splice(1, _private.loadItems.length - 1);
+                                    _private.loadItemIDs['scriptID'] = scriptID;
+                                    obDcfLoaded.addItem({
+                                        type: 'script',
+                                        name: scriptID
+                                    });
+                                    $('script[id="' + scriptID + '"]').html('');
+                                    _loadItems();
+                                    break;
+                            }
+                            break;
+
+                    }
+                    break;
+            }
+        } else {
+            /* auto assign ids to require items template & js */
+            try {
+                var reqObject = eval('ob' + _t.assets.item[0].toUpperCase() + _t.assets.item.slice(1, _t.assets.item.length));
+                reqObject.ids = _private.loadItemIDs;
+            } catch (err) {
+
+            }
+            switch (_t.assets.fnComplete instanceof Function) {
+                case true:
+                    _t.assets.fnComplete(true);
+                    //_t.assets.fnComplete(_private.loadItemIDs);
+                    break;
+            }
+        }
+    }
+
+    var _fnLoad = function() {
+        for (each in dcf.urls.items) {
+            var uiType = each;
+            switch (typeof dcf.urls.items[each]) {
+                case 'object':
+                    var section = dcf.urls.items[each];
+                    for (urlitem in section) {
+                        if (urlitem == _t.assets.item) {
+                            switch (typeof section[urlitem]) {
+                                case 'object':
+                                    for (urlitemtype in section[urlitem]) {
+                                        _private.loadItems.push({
+                                            item: urlitem,
+                                            type: urlitemtype,
+                                            uiType: uiType,
+                                            url: section[urlitem][urlitemtype]
+                                        })
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        _loadItems();
+    }
+
+    _t.require = function(iData) {
+        _fnRequire(iData);
+        return _t;
+    };
+    _t.params = function(iData) {
+        _fnParams(iData);
+        return _t;
+    }
+    _t.load = function(iData) {
+        _t.assets.fnComplete = (iData || '');
+        _fnLoad();
+        return _t;
+    }
+};
+
+/* app cache object */
+var ob_DcfCache = function() {
+    var _t = this;
+
+    var _fnSave = function(iData) {
+        /* 
+        	iData.name
+        	iData.value
+        	iData.type
+        */
+        switch ((iData.type || '')) {
+            case 'local':
+                obDcfLocalData.saveThis({
+                    thisName: iData.name,
+                    thisValue: iData.value
+                });
+                break;
+            default:
+                obDcfSessData.saveThis({
+                    thisName: iData.name,
+                    thisValue: iData.value
+                });
+                break;
+        }
+    };
+
+    var _fnGet = function(iData) {
+        /*
+        	iData.name
+        	iData.type
+        */
+        switch (typeof iData) {
+            case 'string':
+                return obDcfSessData.getThis({
+                    thisName: iData
+                });
+                break;
+            case 'object':
+                switch ((iData.type || '')) {
+                    case 'local':
+                        return obDcfLocalData.getThis({
+                            thisName: iData.name
+                        });
+                        break;
+                    default:
+                        return obDcfSessData.getThis({
+                            thisName: iData.name
+                        });
+                        break;
+                }
+                break;
+        }
+    };
+
+    _t.save = function(iData) {
+        _fnSave(iData);
+        return _t;
+    }
+    _t.get = function(iData) {
+        return _fnGet(iData);
+    }
+    _t.clearSession = function() {
+        obDcfSessData.clearAll();
+    }
+    _t.clearLocal = function() {
+        obDcfLocalData.clearAll();
+    }
+    _t.clearAll = function() {
+        obDcfSessData.clearAll();
+        obDcfLocalData.clearAll();
+    }
+    _t.clearItem = function(iData) {
+        obDcfSessData.clearItem(iData);
+        obDcfLocalData.clearItem(iData);
+    }
+    _t.getAll = function() {
+        var rcached = [];
+        for (var property in sessionStorage) {
+            if (sessionStorage.hasOwnProperty(property)) {
+                rcached.push(property)
+            }
+        };
+        return rcached;
+    };
+};
+
+/* build ui object */
+var ob_DcfBuildUI = function() {
+    var _t = this;
+
+    var _fnRenderUI = function(iObj) {
+        /*
+            iObj.ids.templateID
+            iObj.identifiers
+        */
+        var thisRender = '';
+        var finalRender = '';
+        var replaceItems = {
+            s: '{{',
+            e: '}}',
+            type: 'gi'
+        }
+        /*
+                var assets = {
+                    repeatattr: 'app-repeat',
+                    repeatindex: 'app-repeat-index',
+                    repeatname: 'app-repeat-name',
+                    modifyattr: 'app-modify',
+                    modifyvalue: 'app-modify-value',
+                    modifyoptions: 'app-modify-options',
+                    uiitem: 'app-ui-item',
+                    uidf: 'app-ui-defaultvalue',
+                    uiid: 'app-ui-item-id'
+                }
+        */
+
+        var assets = _assets;
+
+        /* identifiers */
+        thisRender = dcf.cache.get({
+            name: iObj.ids.templateID
+        });
+
+        /* app-repeat */
+        function updateAppRepeat() {
+            switch (thisRender.indexOf(assets.apprepeat) != -1) {
+                case true:
+                    thisRender = $(thisRender);
+                    $(thisRender).find(['*[' + assets.apprepeat + ']'].join('')).each(function() {
+                        var repeatIdentifier = $(this).attr(assets.apprepeat);
+                        var repeatHTML = $(this).html();
+                        var newRepeatHTML = [];
+                        if (repeatIdentifier in iObj.identifiers) {
+                            if (iObj.identifiers[repeatIdentifier] instanceof Array || iObj.identifiers[repeatIdentifier] instanceof Object) {
+                                for (each in iObj.identifiers[repeatIdentifier]) {
+                                    if (!iObj.identifiers[repeatIdentifier].hasOwnProperty(each)) {
+                                        break;
+                                    }
+                                    var $repeatHTML = $(repeatHTML);
+                                    $repeatHTML = $repeatHTML.attr(repeatIdentifier + '-' + assets.apprepeatindex, [each]);
+                                    if ($repeatHTML[0] == undefined) {
+                                        break;
+                                    }
+                                    repeatHTML = $repeatHTML[0].outerHTML;
+                                    var thisRepeatHTML = repeatHTML;
+                                    var reg = new RegExp(replaceItems.s, replaceItems.type);
+                                    var findings = (thisRepeatHTML.match(reg) || []).length;
+
+                                    if (thisRepeatHTML.indexOf(repeatIdentifier + '-index') != -1) {
+                                        var reg = new RegExp(repeatIdentifier + '-index', 'gi');
+                                        thisRepeatHTML = thisRepeatHTML.replace(reg, [each]);
+                                    }
+
+                                    switch (findings > 0) {
+                                        case true:
+                                            var searchIndx = 0;
+                                            for (i = 1; i <= findings; i++) {
+                                                var points = {
+                                                    start: thisRepeatHTML.indexOf(replaceItems.s, searchIndx),
+                                                    end: thisRepeatHTML.indexOf(replaceItems.e, searchIndx)
+                                                }
+                                                if (points.start == points.end || points.start == -1 || points.end == -1) {
+                                                    break;
+                                                }
+                                                var dataitem = (thisRepeatHTML.substring(points.start, points.end + 2));
+                                                var cdi = dataitem.replace(replaceItems.s, '').replace(replaceItems.e, '');
+                                                switch (true) {
+                                                    case (cdi.split('.').length > 1):
+                                                        switch (cdi.split('.')[0] == repeatIdentifier) {
+                                                            case (true):
+                                                                var reg = new RegExp(escape(dataitem), replaceItems.type);
+                                                                thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, eval('(iObj.identifiers[repeatIdentifier][each].' + unescape(escape(cdi.split('.').splice(1, cdi.length).join('.'))) + ')')));
+                                                                break;
+                                                            default:
+                                                                var reg = new RegExp(escape(dataitem, replaceItems.type));
+                                                                try {
+                                                                    thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, eval('(' + 'iObj.identifiers.' + cdi + ')')));
+                                                                } catch (e) {
+                                                                    thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, ''));
+                                                                }
+                                                                break;
+                                                        }
+                                                        break;
+                                                    default:
+                                                        var reg = new RegExp(escape(dataitem, replaceItems.type));
+                                                        var cdi = dataitem.replace(replaceItems.s, '').replace(replaceItems.e, '');
+                                                        thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, eval('(iObj.identifiers.' + cdi + ')')));
+                                                        break;
+                                                }
+                                                searchIndx = points.start + 1;
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    newRepeatHTML.push(thisRepeatHTML);
+                                }
+                            }
+                        } else {
+                            switch (eval('(iObj.identifiers.' + repeatIdentifier + ')') || '') {
+                                case '':
+                                    newRepeatHTML.push(repeatHTML);
+                                    break;
+                                default:
+                                    var fo = eval('(iObj.identifiers.' + repeatIdentifier + ')');
+                                    switch (true) {
+                                        case (fo instanceof Array || fo instanceof Object):
+                                            for (each in fo) {
+                                                if (!fo.hasOwnProperty(each)) {
+                                                    break;
+                                                }
+                                                var $repeatHTML = $(repeatHTML);
+                                                //var reg = new RegExp(/[^\w\s]/,'gi')
+                                                //console.log(reg) - 
+                                                var iden = repeatIdentifier + '-' + assets.apprepeatindex;
+                                                $repeatHTML.attr(iden.replace(reg, '-'), [each]);
+                                                repeatHTML = $repeatHTML[0].outerHTML;
+                                                var thisRepeatHTML = repeatHTML;
+                                                var reg = new RegExp(replaceItems.s, replaceItems.type);
+                                                var findings = (thisRepeatHTML.match(reg) || []).length;
+
+                                                if (thisRepeatHTML.indexOf(repeatIdentifier + '-index') != -1) {
+                                                    var reg = new RegExp(repeatIdentifier + '-index', 'gi');
+                                                    thisRepeatHTML = thisRepeatHTML.replace(reg, [each]);
+                                                }
+
+                                                switch (findings > 0) {
+                                                    case true:
+                                                        var searchIndx = 0;
+                                                        for (i = 1; i <= findings; i++) {
+                                                            var points = {
+                                                                start: thisRepeatHTML.indexOf(replaceItems.s, searchIndx),
+                                                                end: thisRepeatHTML.indexOf(replaceItems.e, searchIndx)
+                                                            }
+                                                            if (points.start == points.end || points.start == -1 || points.end == -1) {
+                                                                break;
+                                                            }
+                                                            var dataitem = (thisRepeatHTML.substring(points.start, points.end + 2));
+                                                            var cdi = dataitem.replace(replaceItems.s, '').replace(replaceItems.e, '');
+                                                            var reg = new RegExp(escape(dataitem, replaceItems.type));
+                                                            switch (typeof eval('(iObj.identifiers.' + cdi + ')')) {
+                                                                case 'string':
+                                                                    thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, eval('(iObj.identifiers.' + cdi + ')')));
+                                                                    break;
+                                                                case 'object':
+                                                                    thisRepeatHTML = unescape(escape(thisRepeatHTML).replace(reg, eval('(iObj.identifiers.' + cdi + '[each])')));
+                                                                    break;
+                                                            }
+                                                        }
+                                                        searchIndx = points.start + 1;
+                                                        break;
+                                                }
+                                                newRepeatHTML.push(thisRepeatHTML);
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                            }
+                        }
+                        $(thisRender).find(['*[' + assets.apprepeat + '="' + repeatIdentifier + '"]'].join('')).html(newRepeatHTML.join(''));
+                        finalRender = $(thisRender)[0].outerHTML;
+                    });
+                    thisRender = finalRender;
+                    break;
+                default:
+                    break;
+            }
+            return thisRender;
+        };
+        /* identifiers updated */
+        thisRender = updateAppRepeat();
+
+        /* app-data-repeat */
+        switch (thisRender.indexOf(assets.appdatarepeat) != -1) {
+            case true:
+                var reg = new RegExp(assets.apprepeat, 'gi');
+                thisRender = thisRender.replace(reg, 'app-peated');
+                var $thisRender = $(thisRender);
+                $thisRender.find('*[' + assets.appdatarepeat + ']').each(function() {
+                    var $this = $(this);
+                    var rparent = $(this).attr(assets.appdataparent);
+                    var rparentindex = $(this).attr(assets.appdataparentindex);
+                    $this.attr(assets.apprepeat, $this.attr(assets.appdatarepeat));
+                    var reg = new RegExp(rparent + '-index', 'gi');
+                    $this = $this[0].outerHTML.replace(reg, rparentindex);
+                    $(this).replaceWith($this);
+                });
+                var reg = new RegExp(assets.appdatarepeat, 'gi');
+                thisRender = $thisRender[0].outerHTML;
+                thisRender = thisRender.replace(reg, 'app-datapeated');
+                thisRender = updateAppRepeat();
+                /* clear repeater */
+                var reg = new RegExp('app-peated', 'gi');
+                thisRender = thisRender.replace(reg, assets.apprepeat)
+                var reg = new RegExp('app-datapeated', 'gi');
+                thisRender = thisRender.replace(reg, assets.appdatarepeat)
+                break;
+            default:
+                break;
+        };
+
+        /* main identifiers */
+        function updateIndentifiers() {
+            var reg = new RegExp(replaceItems.s, replaceItems.type);
+            var findings = (thisRender.match(reg) || []).length;
+            switch (findings > 0) {
+                case true:
+                    var searchIndx = 0;
+                    for (i = 1; i <= findings; i++) {
+                        var points = {
+                            start: thisRender.indexOf(replaceItems.s, searchIndx),
+                            end: thisRender.indexOf(replaceItems.e, searchIndx)
+                        }
+                        if (points.start == points.end || points.start == -1 || points.end == -1) {
+                            break;
+                        }
+                        var dataitem = (thisRender.substring(points.start, points.end + 2));
+                        var cdi = dataitem.replace(replaceItems.s, '').replace(replaceItems.e, '');
+                        try {
+                            switch (true) {
+                                case (dataitem.split('.').length > 1):
+                                    var reg = new RegExp(escape(replaceItems.s + cdi + replaceItems.e), replaceItems.type);
+                                    thisRender = unescape(escape(thisRender).replace(reg, eval('(' + 'iObj.identifiers.' + cdi + ')')))
+                                    break;
+                                default:
+                                    var reg = new RegExp(escape(replaceItems.s + cdi + replaceItems.e), replaceItems.type);
+                                    thisRender = unescape(escape(thisRender).replace(reg, iObj.identifiers[cdi]));
+                                    break;
+                            }
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    }
+                    searchIndx = points.start + 1;
+                    break;
+            }
+            thisRender = thisRender.replace(/=""/gi, '')
+            return thisRender;
+        };
+
+        /* identifiers updated */
+        thisRender = updateIndentifiers();
+
+        /* modifiers */
+        switch (thisRender.indexOf(assets.appmodify) != -1) {
+            case true:
+                var $template = $(thisRender);
+                $template.find('*[' + assets.appmodifyvalue + ']').each(function() {
+                    var modvalue = $(this).attr(assets.appmodifyvalue).toString();
+                    var modoptions = $(this).attr(assets.appmodifyoptions).toString();
+                    var availoptions = modoptions.split('||')
+                    for (each in availoptions) {
+                        if (!availoptions.hasOwnProperty(each)) {
+                            break;
+                        }
+                        availoptions[each] = availoptions[each].split(':')
+                    }
+                    for (i = 0; i <= availoptions.length; i++) {
+                        switch ($.inArray(modvalue, availoptions[i])) {
+                            case -1:
+                                switch (availoptions[availoptions.length - 1][0] == 'default') {
+                                    case true:
+                                        $(this).removeAttr(assets.appmodifyvalue);
+                                        $(this).removeAttr(assets.appmodifyoptions);
+                                        $this = $(this)[0].outerHTML;
+                                        var thisreplacevalue;
+                                        switch (availoptions[availoptions.length - 1][1][0] == "(" && availoptions[availoptions.length - 1][1][availoptions[availoptions.length - 1][1].length - 1] == ")") {
+                                            case true:
+                                                thisreplacevalue = eval(availoptions[availoptions.length - 1][1]);
+                                                break;
+                                            case false:
+                                                thisreplacevalue = availoptions[availoptions.length - 1][1];
+                                                break;
+                                        }
+                                        $this = $this.replace(/app-modify-result=""/gi, thisreplacevalue);
+                                        $this = $this.replace(/app-modify-result/gi, thisreplacevalue);
+                                        $this = $this.replace(/=""/gi, '')
+                                        $(this).replaceWith($this);
+                                        break;
+                                }
+                                break;
+                            default:
+                                $(this).removeAttr(assets.appmodifyvalue);
+                                $(this).removeAttr(assets.appmodifyoptions);
+                                $this = $(this)[0].outerHTML;
+                                var thisreplacevalue;
+                                switch (availoptions[i][1][0] == "(" && availoptions[i][1][availoptions[i][1].length - 1] == ")") {
+                                    case true:
+                                        thisreplacevalue = eval(availoptions[i][1]);
+                                        break;
+                                    case false:
+                                        thisreplacevalue = availoptions[i][1];
+                                        break;
+                                }
+                                $this = $this.replace(/app-modify-result=""/gi, thisreplacevalue);
+                                $this = $this.replace(/app-modify-result/gi, thisreplacevalue);
+                                $this = $this.replace(/=""/gi, '')
+                                $(this).replaceWith($this);
+                                break;
+                        }
+                    }
+                });
+                thisRender = $template[0].outerHTML;
+                break;
+        }
+
+        /* ui items */
+        switch (thisRender.indexOf(assets.appuiitem) != -1) {
+            case true:
+                var $template = $(thisRender);
+                var i = 0;
+                $template.find('*[' + assets.appuiitem + ']').each(function() {
+                    var $this = $(this).clone();
+                    var appuidf = $this.attr(assets.appuidf);
+                    var uitype = $this[0].nodeName;
+                    switch (uitype.toLowerCase()) {
+                        case 'select':
+                            $this.find('option[value="' + appuidf + '"]').attr('selected', 'selected')
+                            $this.attr(assets.appuiid, i + '-' + (new Date()).getTime());
+                            break;
+                        default:
+                            break;
+                    }
+                    $(this).replaceWith($this);
+                    i++;
+                });
+                thisRender = $template[0].outerHTML;
+                break;
+        }
+
+        /* app autosize */
+        switch (thisRender.indexOf(assets.appautosize) != -1) {
+            case true:
+                var autotize = {
+                    defaults: {
+                        css: {
+                            'width': (window.innerWidth / 2) + 'px',
+                            'height': (window.innerHeight / 2) + 'px',
+                            'margin-top': '-' + (window.innerHeight / 4) + 'px',
+                            'margin-left': '-' + (window.innerWidth / 4) + 'px'
+                        }
+                    }
+                };
+                var $template = $(thisRender);
+                $template.find('*[' + assets.appautosize + ']').each(function() {
+                    $(this).css(autotize.defaults.css);
+                });
+                thisRender = $template[0].outerHTML;
+                break;
+        }
+
+        /* cleanse */
+        function cleanse() {
+            var $template = $(thisRender);
+            $template.find('script').each(function() {
+                $(this).remove()
+            });                        
+            
+            thisRender = $template[0].outerHTML;            
+            thisRender = thisRender.replace(/app-validation-pattern=""/gi, '');
+        };
+        cleanse();
+
+        /* return final template */
+        return thisRender;
+    }
+
+    _t.renderUI = function(iObj) {
+        return _fnRenderUI(iObj);
+    }
+}
+
+/* update ui object */
+var ob_DcfUpdateUI = function() {
+    var _t = this;
+
+    var _fnUpdateUI = function(iData) {
+        /*
+        	iData.obj
+        	iData.fnCallback
+        */
+        $(['#', iData.obj.ids.templateID].join('')).replaceWith(dcf.buildUI(iData.obj));
+
+        function processCallback() {
+            iData.fnCallback();
+        }
+        if (iData.fnCallback instanceof Function) {
+            processCallback();
+        }
+    };
+
+    _t.updateUI = function(iData) {
+        _fnUpdateUI(iData);
+    };
+};
+
+/* data bind object */
+var ob_DcfDataBind = function() {
+    var _t = this;
+
+    /*
+      	var assets = {
+            databind: 'app-databind',
+            repindex: '[$index]',
+            apprepeat: 'app-repeat',
+            apprepeatindex: 'app-repeat-index',        
+            uiid: 'app-ui-item-id'	  	
+      	}
+    */
+
+    var assets = _assets;
+
+    var _fnUpdateData = function(iData) {
+        /*
+        	iData.iObj
+        	iData.e
+        */
+        var bind = {
+            item: iData.e.currentTarget.attributes[assets.appdatabind].value,
+            value: iData.e.currentTarget.value,
+            type: iData.e.currentTarget.nodeName,
+            obj: iData.iObj.identifiers,
+            appuiid: (function() {
+                var rappuiid;
+                rappuiid = ((iData.e.currentTarget.attributes[assets.appuiid] || '') == '') ? '' : (iData.e.currentTarget.attributes[assets.appuiid].value)
+                return rappuiid;
+            })()
+        }
+        var binditem = iData.e.currentTarget.attributes[assets.appdatabind].value;
+        var bindvalue = iData.e.currentTarget.value;
+        var bindtype = iData.e.currentTarget.nodeName
+        var bindobj = iData.iObj.identifiers;
+        switch (bind.item.indexOf(assets.repindex)) {
+            case -1:
+                if (bind.item in bind.obj) {
+                    switch (bindtype.toLowerCase()) {
+                        case 'input':
+                            bind.obj[binditem] = bind.value;
+                            break;
+                        case 'select':
+                            alert('implementation required');
+                            break;
+                        case 'textarea':
+                            alert('implementation required');
+                            break;
+                    }
+                } else {
+                    try {
+                        eval('(iData.iObj.identifiers.' + bind.item + ' = ' + JSON.stringify(bind.value) + ')');
+                        //eval('(iData.iObj.identifiers.'+bind.item+' = "'+bind.value+'")');
+                        //bind.obj[binditem] = bind.value;      
+                    } catch (e) {
+
+                    }
+                }
+                break;
+            default:
+                var objn = bind.item.split(assets.repindex)[0];
+                var $template = iData.iObj.currentUI();
+                var $select = $template.find('*[' + assets.appuiid + '="' + bind.appuiid + '"]');
+                var $ridx = ($template.find('*[' + assets.appuiid + '="' + bind.appuiid + '"]').closest('*[' + objn + '-' + assets.apprepeatindex + ']').attr(objn + '-' + assets.apprepeatindex) || '');
+                if ((($select || []).length == 1) && $ridx != '') {
+                    var tdv = bind.item.replace('$index', $ridx);
+                    eval('(iData.iObj.identifiers.' + tdv + ' = "' + bind.value + '")');
+                }
+
+                break;
+        }
+    };
+
+    _t.updateData = function(iData) {
+        _fnUpdateData(iData);
+    };
+};
+
+/* validations object */
+var ob_DcfValidate = function() {
+    var _t = this;
+
+    var assets = {
+        vp: 'app-validation-pattern',
+        id: 'pattern',
+        vs: 'app-validation-show',
+        vac: 'app-validation-addclass',
+        vrc: 'app-validation-removeclass'
+    }
+
+    var _fnValidateContainer = function(iData) {
+        /*
+          iData.from
+          */
+        var items = {
+            passed: [],
+            failed: []
+        }
+        $(iData.from).find('*[app-validation-pattern]').each(function() {
+            var $this = $(this).clone();
+            var pattern = eval($this.attr('app-validation-pattern'));
+            switch (pattern.test($this.val())) {
+                case true:
+                    items.passed.push($this);
+                    break;
+                case false:
+                    items.failed.push($this);
+                    var triggers = {
+                        change: '',
+                        click: ''
+                    }
+                    triggers.change = ($this.attr('app-change'));
+                    triggers.click = ($this.attr('app-click'));
+                    if (triggers.click != undefined) {
+                        $(this).trigger('click');
+                    }
+                    if (triggers.change != undefined) {
+                        $(this).trigger('change');
+                    }
+                    break;
+            }
+        })
+        return items;
+    };
+
+    var _fnValidateByPattern = function(iData) {
+        /*
+		    iData.iObj
+		    iData.e
+	    */
+        var patternValue = (((iData.e.currentTarget.attributes[assets.vp] || '') == '') ? '' : iData.e.currentTarget.attributes[assets.vp].value)
+        var validationShow = (((iData.e.currentTarget.attributes[assets.vs] || '') == '') ? '' : iData.e.currentTarget.attributes[assets.vs].value)
+        var validationAddClass = (((iData.e.currentTarget.attributes[assets.vac] || '') == '') ? '' : iData.e.currentTarget.attributes[assets.vac].value)
+        var validationRemoveClass = (((iData.e.currentTarget.attributes[assets.vrc] || '') == '') ? '' : iData.e.currentTarget.attributes[assets.vrc].value)
+        var nodeValue = iData.e.currentTarget.value;
+
+        /* update self */
+        switch (patternValue.length) {
+            case 0:
+                break;
+            default:
+                var valpat = eval('(' + patternValue + ')');
+                switch (valpat.test(nodeValue)) {
+                    case false:
+                        $(iData.e.currentTarget).addClass(validationAddClass);
+                        break;
+                    case true:
+                        $(iData.e.currentTarget).removeClass(validationAddClass);
+                        break;
+                }
+                break;
+        }
+
+        /* update validation shows */
+        switch (validationShow) {
+            case '':
+                break;
+            default:
+                $(['#', iData.iObj.ids.templateID].join('')).find(validationShow).each(function() {
+                    var $this = $(this).clone();
+                    var showAddClass = ((($this[0].attributes[assets.vac] || '') == '') ? '' : $this[0].attributes[assets.vac].value)
+                    var showRemoveClass = ((($this[0].attributes[assets.vrc] || '') == '') ? '' : $this[0].attributes[assets.vrc].value)
+                    switch (valpat.test(nodeValue)) {
+                        case false:
+                            switch (showAddClass) {
+                                case '':
+                                    $(this).removeClass(dcf.css.hidden.wod);
+                                    break;
+                                default:
+                                    $(this).addClass(showAddClass);
+                                    break;
+                            }
+                            switch (showRemoveClass) {
+                                case '':
+                                    break;
+                                default:
+                                    $(this).removeClass(showRemoveClass);
+                                    break;
+                            }
+                            //$(this).replaceWith($this);							
+                            break;
+                        case true:
+                            var $this = $(this).clone();
+
+                            switch (showAddClass) {
+                                case '':
+                                    $(this).addClass(dcf.css.hidden.wod);
+                                    break;
+                                default:
+                                    $(this).removeClass(showAddClass);
+                                    break;
+                            }
+                            switch (showRemoveClass) {
+                                case '':
+                                    break;
+                                default:
+                                    $(this).addClass(showRemoveClass);
+                                    break;
+                            }
+
+                            //$this.addClass(dcf.css.hide.wod);						
+                            //$(this).replaceWith($this);							
+                            break;
+                    }
+                });
+                break;
+        }
+    };
+
+    _t.validate = function(iData) {
+        _fnValidateByPattern(iData);
+    };
+    _t.validateContainer = function(iData) {
+        return _fnValidateContainer(iData);
+    };
+};
+
+/* init ui object */
+var ob_DcfInitUI = function() {
+    var _t = this;
+
+    var assets = {
+        container: 'body',
+        clickAttr: 'app-click',
+        changeAttr: 'app-change',
+        databind: 'app-databind',
+        valpat: 'app-validation-pattern'
+    }
+
+    /* app-click handler */
+    var _fnClick = function(iObj) {
+        /* click event */
+        var nodeQuery = [];
+        nodeQuery.push(['#', iObj.ids.templateID + '[' + assets.clickAttr + ']'].join(''));
+        nodeQuery.push(['#', iObj.ids.templateID + ' *[' + assets.clickAttr + ']'].join(''));
+        switch (true) {
+            default: $(assets.container).delegate(nodeQuery.join(', '), 'click', function(e) {
+                /* handle databind in object identifiers */
+                if (($(this).attr(assets.databind) || '') != '') {
+                    (new ob_DcfDataBind()).updateData({
+                        iObj: iObj,
+                        e: e
+                    });
+                }
+                /* handle validation in object patterns */
+                if (($(this).attr(assets.valpat) || '') != '') {
+                    (new ob_DcfValidate()).validate({
+                        iObj: iObj,
+                        e: e
+                    });
+                }
+                /* handle click in object events */
+                if ($(this).attr(assets.clickAttr) in iObj.events) {
+                    iObj.events[$(this).attr(assets.clickAttr)](e);
+                }
+                /* stop auto postbacks - form submit */
+                if ($(this).attr('type') == 'button') {
+                    e.preventDefault();
+                }
+                if (e.currentTarget.nodeName.toLowerCase() == 'button') {
+                    e.preventDefault();
+                }
+            });
+            break;
+        }
+    };
+
+    /* app-change handler */
+    var _fnChange = function(iObj) {
+        /* change event */
+        var nodeQuery = [];
+        nodeQuery.push(['#', iObj.ids.templateID + '[' + assets.changeAttr + ']'].join(''));
+        nodeQuery.push(['#', iObj.ids.templateID + ' *[' + assets.changeAttr + ']'].join(''));
+        switch (true) {
+            default: $(assets.container).delegate(nodeQuery.join(', '), 'change', function(e) {
+                /* handle databind in object identifiers */
+                if (($(this).attr(assets.databind) || '') != '') {
+                    (new ob_DcfDataBind()).updateData({
+                        iObj: iObj,
+                        e: e
+                    });
+                }
+                /* handle validation in object patterns */
+                if (($(this).attr(assets.valpat) || '') != '') {
+                    (new ob_DcfValidate()).validate({
+                        iObj: iObj,
+                        e: e
+                    });
+                }
+                /* handle change in object events */
+                if ($(this).attr(assets.changeAttr) in iObj.events) {
+                    iObj.events[$(this).attr(assets.changeAttr)](e);
+                }
+            });
+            break;
+        }
+    };
+
+    _t.setEvents = function(iObj) {
+        /*
+        	iObj.ids.templateID
+        	iObj.events
+        */
+        _fnClick(iObj);
+        _fnChange(iObj);
+    }
+};
+
+var ob_DcfDisableUI = function() {
+    var _t = this;
+
+    _t.disablers = [
+        'input',
+        'button',
+        'textarea',
+        'select',
+        '.btn',
+        'btn-thin',
+        '[dcf-role="button"]',
+        '[dcf-role="button-thin"]'
+    ];
+
+    var _fnDisableUI = function(iObj) {
+        $template = iObj.currentUI();
+        $template.find(_t.disablers.join(',')).addClass(dcf.css.disabled.wod).attr('disabled', 'disabled');
+        $(['#', iObj.ids.templateID].join('')).replaceWith($template);
+    }
+
+    _t.disableUI = function(iObj) {
+        _fnDisableUI(iObj);
+    };
+}
+
+var ob_DcfEnableUI = function() {
+    var _t = this;
+
+    _t.enablers = [
+        'input',
+        'button',
+        'textarea',
+        'select',
+        '.btn',
+        'btn-thin',
+        '[dcf-role="button"]',
+        '[dcf-role="button-thin"]'
+    ];
+
+    var _fnEnableUI = function(iObj) {
+        $template = iObj.currentUI();
+        $template.find(_t.enablers.join(',')).removeClass(dcf.css.disabled.wod).removeAttr('disabled');
+        $(['#', iObj.ids.templateID].join('')).replaceWith($template);
+    }
+
+    _t.enableUI = function(iObj) {
+        _fnEnableUI(iObj);
+    };
+}
+
+/* register object to append framework ui methods */
+var ob_DcfRegister = function(iData) {
+    /*
+    	iData object
+    */
+    var _t = this;
+
+    var _fnRegisterUI = function(iObj) {
+
+        var _fnHide = function(iData) {
+            $(['#', iObj.ids.templateID].join('')).hide();
+            if (iObj.onClose instanceof Function) {
+                iObj.onClose();
+                iObj.onClose = '';
+            }
+        };
+
+        var _fnShow = function(iData) {
+            $(['#', iObj.ids.templateID].join('')).show();
+        };
+
+        iObj.hide = function(iData) {
+            _fnHide(iData);
+        };
+
+        iObj.show = function(iData) {
+            _fnShow(iData);
+        };
+
+        iObj.onClose = '';
+
+        /* init even handlers */
+        iObj.initUI = function() {
+            dcf.initUI(iObj);
+        };
+        /* build ui for mod */
+        iObj.buildUI = function() {
+            return dcf.buildUI(iObj);
+        }
+        /* auto update ui */
+        iObj.updateUI = function(iData) {
+            /*
+			    iData callback function
+		    */
+            dcf.updateUI({
+                obj: iObj,
+                fnCallback: iData
+            })
+        }
+        /* clone ui */
+        iObj.cloneUI = function() {
+            return $(dcf.buildUI(iObj));
+        }
+        /* replace existing ui */
+        iObj.replaceUI = function(iClone) {
+            $(['#', iObj.ids.templateID].join('')).replaceWith(iClone)
+            return iObj;
+        }
+        /* current ui */
+        iObj.currentUI = function() {
+            return $(['#', iObj.ids.templateID].join(''));
+        }
+        /* disable current ui */
+        iObj.disableUI = function() {
+            dcf.disableUI(iObj);
+        }
+        /* enable current ui */
+        iObj.enableUI = function() {
+            dcf.enableUI(iObj);
+        }
+        /* enable current ui */
+        iObj.clearCache = function() {
+            dcf.clearObjectCache(iObj);
+        }
+    }
+
+    _t.registerOb = function(iData) {
+        if (iData.obj instanceof Object) {
+            switch (iData.type) {
+                case 'ui':
+                    _fnRegisterUI(iData.obj)
+                    break;
+            }
+        }
+    };
+};
+
+/* main object */
+var ob_Dcf = function() {
+    var _t = this;
+
+    _t.logging = obDcfLogging;
+
+    _t.urls = (typeof ob_DcfUrls == 'undefined') ? '' : (new ob_DcfUrls());
+
+    _t.css = (typeof ob_DcfCss == 'undefined') ? '' : (new ob_DcfCss());
+
+    _t.patterns = new ob_DcfRegExp();
+
+    _t.registerUI = function(iData) {
+        (new ob_DcfRegister()).registerOb({
+            obj: iData,
+            type: 'ui'
+        });
+    };
+
+    _t.require = function(iData) {
+        return (new ob_DcfRequire()).require(iData);
+    };
+
+    _t.cache = new ob_DcfCache();
+
+    _t.initUI = function(iObj) {
+        (new ob_DcfInitUI()).setEvents(iObj);
+    }
+
+    _t.buildUI = function(iObj) {
+        function returnUI() {
+            var returnBuildUI = '';
+            returnBuildUI = (new ob_DcfBuildUI()).renderUI(iObj);
+            return returnBuildUI;
+        }
+        return returnUI();
+    }
+    _t.updateUI = function(iData) {
+        (new ob_DcfUpdateUI()).updateUI(iData);
+    }
+    _t.validateUI = function(iData) {
+        return (new ob_DcfValidate()).validateContainer({
+            from: (iData.from || '')
+        });
+    }
+    _t.disableUI = function(iObj) {
+        (new ob_DcfDisableUI()).disableUI(iObj);
+    }
+    _t.enableUI = function(iObj) {
+        (new ob_DcfEnableUI()).enableUI(iObj);
+    }
+    _t.clearObjectCache = function(iObj) {
+        var tc = new ob_DcfCache();
+        for (each in iObj.ids) {
+            if (!iObj.ids.hasOwnProperty(each)) {
+                break;
+            }
+            tc.clearItem(iObj.ids[each])
+        }
+    }
+    _t.obDcfLoaded = obDcfLoaded.items();
+    _t.version = {
+	    release:{
+			date:'Sept 5th 2021',
+			time:'12:42',
+			zone:'Pacific'
+		}
+    }
+};
+var dcf = new ob_Dcf();
+
+/* 	********************************************************************************************************************************************************************************** 	
+ */
+/* do not modify  */
+/* 
+ ********************************************************************************************************************************************************************************** 
+ */

@@ -1,0 +1,65 @@
+﻿/* 
+	DCF JS URLs - sia@dynconfou.org
+	Build: b09052021-14:45
+*/
+
+/* url object for ui components and controls - html & js & styles */
+var ob_DcfUrls = function() {
+    var _t = this;
+    
+    _t.library = {
+	    origin:'https://library.dynconfou.org'
+    }
+
+    var _private = {
+        baseurl: {
+            components: window.location.origin + '/overview/components/',
+            controls: window.location.origin + '/overview/controls/',
+            pages: '/'
+        },
+        liburl:{
+	        components: _t.library.origin +'/dcf/components/',
+            controls: _t.library.origin + '/dcf/controls/',
+            pages: '/'
+        },
+        actionsurl: {
+            actions: window.location.origin + '/overview/app/actions/',
+            pages: '/'
+        }
+    }
+    _t.items = {	 
+		global:{
+			modal: {
+                template: _private.liburl.controls + 'modal/modal.template.html',
+                script: _private.liburl.controls + 'modal/modal.script.js'
+            }
+		},		
+		components:{
+			footer:{
+                template: _private.baseurl.components + 'footer/footer.template.html',
+                script: _private.baseurl.components + 'footer/footer.script.js'												
+			}
+		}
+    },
+    _t.data = {
+        /* list of get(data) urls */	        
+		get: {
+		    
+		},
+		/* list of send(data) urls */
+		send: {
+			
+		}	        
+    }
+    _t.pages = {
+	    homepage: _private.baseurl.pages
+    }
+	_t.version = {
+	    release:{
+			date:'Sept 5th 2021',
+			time:'14:45',
+			zone:'Pacific'
+		}
+    }
+}
+/** editable per application use : end **/

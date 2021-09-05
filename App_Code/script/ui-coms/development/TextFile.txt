@@ -1,0 +1,130 @@
+﻿/* 
+	DCF COMS - sia@dynconfou.org
+	Build: b09052021-12:45
+*/
+var ob_DcfComms = function(initData) {
+    /*
+    	iData.hear
+    */
+
+    var _t = this;
+
+    _t.identifiers = {
+
+    };
+    /*** EDITABLE - BEGIN ***/
+    /* add various comms */
+    _t.coms = {
+
+    };
+    /* add various methods & responses */
+    _t.methods = {
+
+    };
+    /*** EDITABLE - END ***/
+
+    var _fnInternal = {
+        fnInit: function(iData) {
+            /* create comms */
+            if (iData != 'undefined') {
+                if (iData.load == true) {
+                    var integComms = document.createElement('div');
+                    integComms.id = [iData.coms.id, '-wrapper'].join('');
+                    integComms.classList.add('hidden');
+                    integComms.innerHTML = ['<', 'i', 'f', 'r', 'a', 'm', 'e', ' ', 'name="' + iData.coms.name + '"', ' ', 'id="' + iData.coms.id + '"', ' ', 'scrolling="no"', ' ', 'src="' + iData.coms.src + '"', '>', '</', 'iframe', '>'].join('');
+                    var referenceNode = document.querySelector('body');
+                    /* Insert the new node before the reference node */
+                    referenceNode.after(integComms);
+                }
+            }
+        },
+        fnEaring: function(iData) {
+            /*
+            			console.log('_fnInternal.fnEaring')
+            			console.log('iData');
+            			console.log(iData);
+            */
+
+            switch (typeof iData) {
+                case 'object':
+                    if (iData.data != undefined) {
+                        var re = iData.data;
+                        /*
+                                                console.log('re');
+                                                console.log(re);
+                                                console.log('re.article');
+                                                console.log(re.article)
+                        */
+                        for (each in dcfAPI.methods) {
+                            // 						console.log(dcfAPI.methods[each].action)
+                            if (re.article == dcfAPI.methods[each].action) {
+                                // 								console.log('dcfAPI.methods - found');
+                                if (typeof dcfAPI.methods[each].fnCallback == 'function') {
+                                    dcfAPI.methods[each].rData = re;
+                                    dcfAPI.methods[each].fnCallback(re);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        },
+        fnTalkback: function(iData) {
+            /*
+            	iData.postData
+            */
+            /*
+            			console.log('fnTalkback');
+            			console.log('iData');
+            			console.log(iData);
+            */
+
+            dcfAPI.talkData = iData;
+
+            var _mega = ['#', iData.coms.id].join('');
+            var _speaking = iData.coms.src;
+            $(_mega)[0].contentWindow.postMessage(JSON.stringify(iData.postData), _speaking);
+            /*
+                        var _mega = ['#', 'integrating', 'frame'].join('');
+                        var _speaking = obSetupIntegrationAccount.identifiers.speaking;
+                        $(_mega)[0].contentWindow.postMessage(JSON.stringify(iData.postData), _speaking);
+            */
+        }
+    };
+
+    _t.init = function(iData) {
+        _fnInternal.fnInit(iData);
+    }
+
+    _t.earing = function(iData) {
+        _fnInternal.fnEaring(iData);
+    };
+
+    _t.talkback = function(iData) {
+        _fnInternal.fnTalkback(iData);
+    }
+    
+    _t.version = {
+	    release:{
+			date:'Sept 5th 2021',
+			time:'12:45',
+			zone:'Pacific'
+		}
+    }     
+
+    if (initData.hear == true) {
+        /* create lisenter */
+        window.addEventListener('message', _t.earing);
+    }
+};
+
+
+var dcfAPI = new ob_DcfComms({
+    hear: true
+});
+
+/* create lisenter */
+// window.addEventListener('message', dcfAPI.earing);

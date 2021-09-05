@@ -19,7 +19,12 @@
 	</style>
 </head>
 <body>
-    
+    <!-- 	DCF:URLs -->	
+	<script src="/handler/ui-urls/authenticate.ashx" type="text/javascript"></script>	
+    <!-- 	DCF:API -->
+	<script src="/handler/ui-coms/authenticate.ashx" type="text/javascript"></script>	
+	<!-- 	DCF:Framework -->
+	<script src="/handler/ui-framework/authenticate.ashx" type="text/javascript"></script>				
     <div>
     
     </div>
