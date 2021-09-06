@@ -1,6 +1,6 @@
-﻿/* 
-	DCF JS URLs - sia@dynconfou.org
-	Build: b09052021-14:45
+﻿/*
+    DCF JS URLs - sia@dynconfou.org
+    Build: b09052021-14:45
 */
 
 /* url object for ui components and controls - html & js & styles */

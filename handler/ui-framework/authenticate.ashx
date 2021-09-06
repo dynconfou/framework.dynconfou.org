@@ -201,12 +201,16 @@ public class authenticate : IHttpHandler {
         string contents = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/"+upath) + "//" +fileName);
 
         HttpContext.Current.Response.Write(
-            "/* Authorized: " + requestInitData.requestURL + " */" +
+            "/* " + 
+            "\r\n" + "Authorized: " + requestInitData.requestURL + 
+            "\r\n" + "*/" +
+            "\r\n" +
             "\r\n" + "/* " +
             "\r\n" + "IP: " + requestInitData.requestIP +
             "\r\n" + "Client: " + requestInitData.requestClient +
             "\r\n" + "Delivered: " + DateTime.Now +
-            " */" +
+            "\r\n" + "*/" +
+            "\r\n" +
             "\r\n" + contents);
         /* context.Response.WriteFile(context.Server.MapPath("~/"+upath) + "//" +fileName); */
     }
