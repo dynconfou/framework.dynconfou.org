@@ -155,6 +155,27 @@ public class anyTrackerData
         set { uiComsRequestFailed = value; }
     }
 
+    public string uiThemeRequestInit = "ui-theme-request-init";
+    private string UiThemeRequestInit
+    {
+        get { return uiThemeRequestInit; }
+        set { uiThemeRequestInit = value; }
+    }
+
+    public string uiThemeRequestSuccess = "ui-theme-request-success";
+    private string UiThemeRequestSuccess
+    {
+        get { return uiThemeRequestSuccess; }
+        set { uiThemeRequestSuccess = value; }
+    }
+
+    public string uiThemeRequestFailed = "ui-theme-request-failed";
+    private string UiThemeRequestFailed
+    {
+        get { return uiThemeRequestFailed; }
+        set { uiThemeRequestFailed = value; }
+    }
+
     public string uiUrlsRequestInit = "ui-urls-request-init";
     private string UiUrlsRequestInit
     {

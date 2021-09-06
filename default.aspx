@@ -19,14 +19,19 @@
 	</style>
 </head>
 <body>
-    <!-- 	DCF:URLs -->	
-	<script src="/handler/ui-urls/authenticate.ashx" type="text/javascript"></script>	
-    <!-- 	DCF:API -->
-	<script src="/handler/ui-coms/authenticate.ashx" type="text/javascript"></script>	
-	<!-- 	DCF:Framework -->
-	<script src="/handler/ui-framework/authenticate.ashx" type="text/javascript"></script>				
-    <div>
-    
+
+    <div runat="server" visible="false">
+	    <!-- 	DCF:CSS-Internal -->
+	    <link href="/handler/ui-theme/authenticate.ashx" type="text/css" rel="stylesheet" />		
+	    <!-- 	JQuery -->
+	    <script src="https://library.dynconfou.org/dcf/script/jq/jquery.js" type="text/javascript"></script>	
+
+        <!-- 	DCF:URLs -->	
+	    <script src="/handler/ui-urls/authenticate.ashx" type="text/javascript"></script>	
+        <!-- 	DCF:API -->
+	    <script src="/handler/ui-coms/authenticate.ashx" type="text/javascript"></script>	
+	    <!-- 	DCF:Framework -->
+	    <script src="/handler/ui-framework/authenticate.ashx" type="text/javascript"></script>				    
     </div>
     
 </body>
