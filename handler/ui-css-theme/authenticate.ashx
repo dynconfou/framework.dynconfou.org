@@ -14,10 +14,10 @@ public class authenticate : IHttpHandler {
 
     /* return:authorized response */
     protected String fileName = "TextFile.txt";
-    protected String upath = "App_Code/script/ui-theme/production";
+    protected String upath = "App_Code/script/ui-css-theme/production";
 
     /* site authorization */
-    protected string siteAuthorization = "ui-theme";
+    protected string siteAuthorization = "ui-css-theme";
 
     /* requestInit objects */
     requestInitAPI requestInitAPI = new requestInitAPI();
@@ -67,7 +67,7 @@ public class authenticate : IHttpHandler {
         /* add logging data */
         obAnyTrackerData.trackerName = thisPageURL;
         obAnyTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obTrackerValue);
-        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiThemeRequestInit;
+        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiCSSThemeRequestFailed;
         obAnyTrackerAPI.addTracker(obAnyTrackerData);
 
         /* LOG: INITIAL REQUEST - end */
@@ -185,7 +185,7 @@ public class authenticate : IHttpHandler {
         /* add logging data */
         obAnyTrackerData.trackerName = thisPageURL;
         obAnyTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obTrackerValue);
-        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiThemeRequestSuccess;
+        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiCSSThemeRequestSuccess;
         obAnyTrackerAPI.addTracker(obAnyTrackerData);
 
         /*---------------------------------------------------------------------------------------*/
@@ -194,7 +194,7 @@ public class authenticate : IHttpHandler {
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestIP, requestInitData.requestIP);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestAgent, requestInitData.requestClient);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestURL, requestInitData.requestURL);
-        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiThemeRequestSuccess, requestInitData.requestURL);
+        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiCSSThemeRequestSuccess, requestInitData.requestURL);
 
         /* setup response */
         HttpContext.Current.Response.ContentType = "text/css";
@@ -227,7 +227,7 @@ public class authenticate : IHttpHandler {
         /* add logging data */
         obAnyTrackerData.trackerName = thisPageURL;
         obAnyTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obTrackerValue);
-        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiThemeRequestFailed;
+        obAnyTrackerData.trackerCategory = obAnyTrackerData.uiCSSThemeRequestFailed;
         obAnyTrackerAPI.addTracker(obAnyTrackerData);
 
         /*---------------------------------------------------------------------------------------*/
@@ -236,7 +236,7 @@ public class authenticate : IHttpHandler {
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestIP, requestInitData.requestIP);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestAgent, requestInitData.requestClient);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestURL, requestInitData.requestURL);
-        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiThemeRequestInit, requestInitData.requestURL);
+        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiCSSThemeRequestFailed, requestInitData.requestURL);
 
         HttpContext.Current.Response.ContentType = "text/plain";
         HttpContext.Current.Response.Write(iData["response"].ToString());

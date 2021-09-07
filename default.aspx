@@ -22,7 +22,7 @@
 
     <div runat="server" visible="false">
 	    <!-- 	DCF:CSS-Internal -->
-	    <link href="/handler/ui-theme/authenticate.ashx" type="text/css" rel="stylesheet" />		
+	    <link href="/handler/ui-css/authenticate.ashx" type="text/css" rel="stylesheet" />		
 	    <!-- 	JQuery -->
 	    <script src="https://library.dynconfou.org/dcf/script/jq/jquery.js" type="text/javascript"></script>	
 

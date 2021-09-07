@@ -155,25 +155,67 @@ public class anyTrackerData
         set { uiComsRequestFailed = value; }
     }
 
-    public string uiThemeRequestInit = "ui-theme-request-init";
-    private string UiThemeRequestInit
+    public string uiCSSRequestInit = "ui-css-request-init";
+    private string UiCSSRequestInit
     {
-        get { return uiThemeRequestInit; }
-        set { uiThemeRequestInit = value; }
+        get { return uiCSSRequestInit; }
+        set { uiCSSRequestInit = value; }
     }
 
-    public string uiThemeRequestSuccess = "ui-theme-request-success";
-    private string UiThemeRequestSuccess
+    public string uiCSSRequestSuccess = "ui-css-request-success";
+    private string UiCSSRequestSuccess
     {
-        get { return uiThemeRequestSuccess; }
-        set { uiThemeRequestSuccess = value; }
+        get { return uiCSSRequestSuccess; }
+        set { uiCSSRequestSuccess = value; }
     }
 
-    public string uiThemeRequestFailed = "ui-theme-request-failed";
-    private string UiThemeRequestFailed
+    public string uiCSSRequestFailed = "ui-css-request-failed";
+    private string UiCSSRequestFailed
     {
-        get { return uiThemeRequestFailed; }
-        set { uiThemeRequestFailed = value; }
+        get { return uiCSSRequestFailed; }
+        set { uiCSSRequestFailed = value; }
+    }
+    
+    public string uiCSSThemeRequestInit = "ui-css-theme-request-init";
+    private string UiCSSThemeRequestInit
+    {
+        get { return uiCSSThemeRequestInit; }
+        set { uiCSSThemeRequestInit = value; }
+    }
+
+    public string uiCSSThemeRequestSuccess = "ui-css-theme-request-success";
+    private string UiCSSThemeRequestSuccess
+    {
+        get { return uiCSSThemeRequestSuccess; }
+        set { uiCSSThemeRequestSuccess = value; }
+    }
+
+    public string uiCSSThemeRequestFailed = "ui-css-theme-request-failed";
+    private string UiCSSThemeRequestFailed
+    {
+        get { return uiCSSThemeRequestFailed; }
+        set { uiCSSThemeRequestFailed = value; }
+    }
+
+    public string uiCSSStructureRequestInit = "ui-css-structure-request-init";
+    private string UiCSSStructureRequestInit
+    {
+        get { return uiCSSStructureRequestInit; }
+        set { uiCSSStructureRequestInit = value; }
+    }
+
+    public string uiCSSStructureRequestSuccess = "ui-css-structure-request-success";
+    private string UiCSSStructureRequestSuccess
+    {
+        get { return uiCSSStructureRequestSuccess; }
+        set { uiCSSStructureRequestSuccess = value; }
+    }
+
+    public string uiCSSStructureRequestFailed = "ui-css-structure-request-failed";
+    private string UiCSSStructureRequestFailed
+    {
+        get { return uiCSSStructureRequestFailed; }
+        set { uiCSSStructureRequestFailed = value; }
     }
 
     public string uiUrlsRequestInit = "ui-urls-request-init";
