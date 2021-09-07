@@ -236,7 +236,7 @@ public class authenticate : IHttpHandler {
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestIP, requestInitData.requestIP);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestAgent, requestInitData.requestClient);
         HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestURL, requestInitData.requestURL);
-        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiUrlsRequestInit, requestInitData.requestURL);
+        HttpContext.Current.Response.AddHeader(obAnyTrackerData.uiUrlsRequestFailed, requestInitData.requestURL);
 
         HttpContext.Current.Response.ContentType = "text/plain";
         HttpContext.Current.Response.Write(iData["response"].ToString());
