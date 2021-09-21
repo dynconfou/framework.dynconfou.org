@@ -2,6 +2,7 @@
 
 using System;
 using System.Web;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web.Script.Serialization;
 
@@ -19,16 +20,16 @@ public class authenticate : IHttpHandler {
     protected string siteAuthorization = "ui-coms";
 
     /* requestInit objects */
-    reQuestTrackerAPI obReQuestTrackerAPI = new reQuestTrackerAPI();
-    reQuestTrackerData obReQuestTrackerData = new reQuestTrackerData();
-    reQuestTrackerStatic obReQuestTrackerStatic = new reQuestTrackerStatic();
+    requestInitAPI obRequestInitAPI = new requestInitAPI();
+    requestInitData obRequestInitData = new requestInitData();
 
     /* headerInfoData object */
     headerInfoData obHeaderInfoData = new headerInfoData();
 
     public void ProcessRequest (HttpContext context) {
+
         /* setup requestInit */
-        obReQuestTrackerAPI.getInitData(HttpContext.Current, obReQuestTrackerData);
+        obRequestInitAPI.getInitData(HttpContext.Current, obRequestInitData);
 
         if (iData.Count == 0 && iFormData.Count != 0)
         {
@@ -36,32 +37,30 @@ public class authenticate : IHttpHandler {
         }
 
         /* auth init data */
-        obReQuestTrackerData.trackerName = obReQuestTrackerStatic.authenticateUIComs;
-        obReQuestTrackerData.trackerCategory = obReQuestTrackerStatic.frameworkRequestInit;
-        obReQuestTrackerData.siteURL = obReQuestTrackerData.reQuestURL;
-        obReQuestTrackerData.siteAUTH = siteAuthorization;
+        obRequestInitData.siteURL = thisPageURL;
+        obRequestInitData.authType = siteAuthorization;
 
         /* log initial request */
-        obReQuestTrackerAPI.initRequest(HttpContext.Current, obReQuestTrackerData);
+        obRequestInitAPI.initRequest(HttpContext.Current, obRequestInitData);
 
         /* add header values */
-        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestIP, obReQuestTrackerData.reQuestIP);
-        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestAgent, obReQuestTrackerData.reQuestClient);
-        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestURL, obReQuestTrackerData.reQuestURL);
-        //HttpContext.Current.Response.AddHeader((new anyTrackerData()).uiComsRequestSuccess, obRequestInitData.requestURL);
+        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestIP, obRequestInitData.requestIP);
+        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestAgent, obRequestInitData.requestClient);
+        HttpContext.Current.Response.AddHeader(obHeaderInfoData.requestURL, obRequestInitData.requestURL);
+        HttpContext.Current.Response.AddHeader((new anyTrackerData()).uiComsRequestSuccess, obRequestInitData.requestURL);
 
         /* setup response */
         HttpContext.Current.Response.ContentType = "text/javascript";
-        string contents = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/"+upath) + "//" +fileName);        
+        string contents = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/"+upath) + "//" +fileName);
 
         HttpContext.Current.Response.Write(
             "/* " +
-            "\r\n" + "Authorized: " + obReQuestTrackerData.reQuestURL +
+            "\r\n" + "Authorized: " + obRequestInitData.requestURL +
             "\r\n" + "*/" +
             "\r\n" +
             "\r\n" + "/* " +
-            "\r\n" + "IP: " + obReQuestTrackerData.reQuestIP +
-            "\r\n" + "Client: " + obReQuestTrackerData.reQuestClient +
+            "\r\n" + "IP: " + obRequestInitData.requestIP +
+            "\r\n" + "Client: " + obRequestInitData.requestClient +
             "\r\n" + "Delivered: " + DateTime.Now +
             "\r\n" + "*/" +
             "\r\n" +
@@ -69,8 +68,7 @@ public class authenticate : IHttpHandler {
         /* context.Response.WriteFile(context.Server.MapPath("~/"+upath) + "//" +fileName); */
 
         /* log success request */
-        obReQuestTrackerData.reQuestAction = obReQuestTrackerStatic.frameworkRequestSuccess;
-        obReQuestTrackerAPI.finalizeRequest(obReQuestTrackerData);
+        obRequestInitAPI.logSuccessRequest(obRequestInitData);
     }
 
     public bool IsReusable {
