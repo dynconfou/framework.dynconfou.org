@@ -20,6 +20,7 @@ public class reQuestTrackerStatic
     public string reQuestClient = "ReQuestClient";
     public string reQuestDateTime = "ReQuestDateTime";
     public string reQuestDeny = "deny";
+    public string reQuestAllow = "allow";
     public string frameworkRequestURLAuthRequired = "framework-request-url-authorization-required";
     public string frameworkRequestIPAddressAuthRequired = "framework-request-ipaddress-authorization-required";
     public string frameworkRequestAgentAuthRequired = "framework-request-agent-authorization-required";        

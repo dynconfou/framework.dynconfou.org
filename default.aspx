@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <div runat="server" visible="true">
+    <div runat="server" visible="false">
 	    <!-- 	DCF:CSS-Internal -->
 	    <link href="/handler/ui-css/authenticate.ashx" type="text/css" rel="stylesheet" />		
 	    <!-- 	JQuery -->

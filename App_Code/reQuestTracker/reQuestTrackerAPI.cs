@@ -220,7 +220,7 @@ public class reQuestTrackerAPI
         iData.trackerName = iData.siteURL;
         iData.trackerValue = new JavaScriptSerializer().Serialize(obReQuestTrackerValue);
 
-        if (iData.dbClientAction == obRequestTrackerStatic.reQuestDeny)
+        if (iData.dbClientAuthorization != obRequestTrackerStatic.reQuestAllow)
         {
             /* finish logging */
             iData.trackerCategory = obRequestTrackerStatic.frameworkRequestAgentAuthRequired;
@@ -230,7 +230,7 @@ public class reQuestTrackerAPI
             /* redirect */
             HttpContext.Current.Response.Redirect(siteSettings.authRequiredAgent);
         }
-        else if (iData.dbIPAction == obRequestTrackerStatic.reQuestDeny)
+        else if (iData.dbIPAuthorization == obRequestTrackerStatic.reQuestDeny)
         {
             /* finish logging */
             iData.trackerCategory = obRequestTrackerStatic.frameworkRequestIPAddressAuthRequired;
