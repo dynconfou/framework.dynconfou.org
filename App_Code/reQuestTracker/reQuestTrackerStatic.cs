@@ -37,10 +37,15 @@ public class reQuestTrackerStatic
         get { return frameworkRequestSuccess; }
         set { frameworkRequestSuccess = value; }
     }
+    /* standard|internal use */
     public string authenticateUIComs = "authenticate-ui-coms";
     public string authenticateUICSS = "authenticate-ui-css";
     public string authenticateUICSSStructure = "authenticate-ui-css-structure";
     public string authenticateUICSSTheme = "authenticate-ui-css-theme";
     public string authenticateUIURLs = "authenticate-ui-urls";
     public string authenticateUIFramework = "authenticate-ui-framework";
+    /* integration use */
+    public string authenticateUICSSIntegration = "authenticate-ui-css-integration";
+    public string authenticateUICSSStructureIntegration = "authenticate-ui-css-structure-integration";
+    public string authenticateUICSSThemeIntegration = "authenticate-ui-css-theme-integration";
 }
