@@ -13,7 +13,7 @@ public class reQuestTrackerAPI
 {
     /* reQuestTracker objects */
     //reQuestTrackerData obReQuestTrackerData = new reQuestTrackerData();
-    reQuestTrackerStatic obRequestTrackerStatic = new reQuestTrackerStatic();
+    reQuestTrackerStatic obReQuestTrackerStatic = new reQuestTrackerStatic();
     SortedDictionary<string, string> obReQuestTrackerValue = new SortedDictionary<string, string>();
 
     public reQuestTrackerAPI()
@@ -40,6 +40,48 @@ public class reQuestTrackerAPI
             iData.reQuestClient = iCurrent.Request.UserAgent.ToString();
         }
         else { iData.reQuestClient = "na"; }
+    }
+
+    public void validateReQuestTracker(reQuestTrackerData iData) {
+        SqlConnection ConnString = new SqlConnection();
+
+        if (siteSettings.apiEnvy == siteSettings.development)
+        {
+            //using development connection
+            ConnString.ConnectionString = siteSettings.apiDevDBConnection;
+        }
+        else
+        {
+            //using production connectin
+            ConnString.ConnectionString = siteSettings.apiLiveDBConnection;
+        }
+
+        string sp_Use = "dbo.spValidateReQuestTracker";
+
+        SqlCommand SqlSP = new SqlCommand(sp_Use);
+        SqlSP.Connection = ConnString;
+        SqlSP.CommandType = CommandType.StoredProcedure;
+        SqlSP.Parameters.AddWithValue("@reQuestGUID", iData.reQuestGUID);
+
+        ConnString.Open();
+
+        SqlDataAdapter sda = new SqlDataAdapter(SqlSP);
+        DataSet ds = new DataSet();
+        sda.Fill(ds);
+        if (ds.Tables.Count > 0)
+        {
+            DataRow thisdr = ds.Tables[0].Rows[0];
+            iData.reQuestValid = thisdr["reQuestValid"].ToString();
+            iData.reQuestGUID = thisdr["reQuestGUID"].ToString();            
+        }
+        else
+        {
+            iData.reQuestGUID = null;
+        }
+
+        ConnString.Close();
+        ConnString.Dispose();
+        ds.Dispose();
     }
 
     public void addReQuestTracker(reQuestTrackerData iData)
@@ -81,7 +123,11 @@ public class reQuestTrackerAPI
         if (ds.Tables.Count > 0)
         {
             DataRow thisdr = ds.Tables[0].Rows[0];
-            iData.reQuestGUID = thisdr["reQuestGUID"].ToString();
+            if (iData.reQuestGUID == null)
+            {
+                iData.reQuestGUID = thisdr["reQuestGUID"].ToString();
+            }
+            
         }
         else
         {
@@ -100,10 +146,10 @@ public class reQuestTrackerAPI
 
         /* setup logging data */
         obReQuestTrackerValue.Clear();
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestURL, iData.reQuestURL);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestIP, iData.reQuestIP);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestClient, iData.reQuestClient);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, iData.reQuestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, iData.reQuestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, iData.reQuestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
 
         /* add logging data */
         oData.trackerName = iData.trackerName;
@@ -125,10 +171,10 @@ public class reQuestTrackerAPI
 
         /* setup logging data */
         obReQuestTrackerValue.Clear();
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestURL, iData.reQuestURL);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestIP, iData.reQuestIP);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestClient, iData.reQuestClient);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, iData.reQuestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, iData.reQuestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, iData.reQuestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
 
         /* add logging data */
         oData.trackerName = iData.trackerName;
@@ -211,44 +257,44 @@ public class reQuestTrackerAPI
 
         /* setup logging data */
         obReQuestTrackerValue.Clear();
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestURL, iData.reQuestURL);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestIP, iData.reQuestIP);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestClient, iData.reQuestClient);
-        obReQuestTrackerValue.Add(obRequestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, iData.reQuestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, iData.reQuestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, iData.reQuestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
 
         /* add logging data */
         iData.trackerName = iData.siteURL;
         iData.trackerValue = new JavaScriptSerializer().Serialize(obReQuestTrackerValue);
 
-        if (iData.dbClientAuthorization != obRequestTrackerStatic.reQuestAllow)
+        if (iData.dbClientAuthorization != obReQuestTrackerStatic.reQuestAllow)
         {
             /* finish logging */
-            iData.trackerCategory = obRequestTrackerStatic.frameworkRequestAgentAuthRequired;
+            iData.trackerCategory = obReQuestTrackerStatic.frameworkRequestAgentAuthRequired;
             iData.reQuestAction = siteSettings.authRequiredAgent;
             addReQuestTracker(iData);
 
             /* redirect */
-            HttpContext.Current.Response.Redirect(siteSettings.authRequiredAgent);
+            HttpContext.Current.Response.Redirect(siteSettings.authRequiredAgent + "?rGuid=" + iData.reQuestGUID);
         }
-        else if (iData.dbIPAuthorization == obRequestTrackerStatic.reQuestDeny)
+        else if (iData.dbIPAuthorization == obReQuestTrackerStatic.reQuestDeny)
         {
             /* finish logging */
-            iData.trackerCategory = obRequestTrackerStatic.frameworkRequestIPAddressAuthRequired;
+            iData.trackerCategory = obReQuestTrackerStatic.frameworkRequestIPAddressAuthRequired;
             iData.reQuestAction = siteSettings.authRequiredIP;
             addReQuestTracker(iData);
 
             /* redirect */
-            HttpContext.Current.Response.Redirect(siteSettings.authRequiredIP);
+            HttpContext.Current.Response.Redirect(siteSettings.authRequiredIP + "?rGuid=" + iData.reQuestGUID);
         }
         else if (iData.dbSiteAuthorization == "false")
         {
             /* finish logging */
-            iData.trackerCategory = obRequestTrackerStatic.frameworkRequestURLAuthRequired;
+            iData.trackerCategory = obReQuestTrackerStatic.frameworkRequestURLAuthRequired;
             iData.reQuestAction = siteSettings.authRequiredURL;
             addReQuestTracker(iData);
 
             /* redirect */
-            HttpContext.Current.Response.Redirect(siteSettings.authRequiredURL);
+            HttpContext.Current.Response.Redirect(siteSettings.authRequiredURL + "?rGuid=" + iData.reQuestGUID);
         }
     }
 }

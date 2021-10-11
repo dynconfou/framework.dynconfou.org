@@ -92,6 +92,13 @@ public class reQuestTrackerData
         set { reQuestAction = value; }
     }
 
+    public string reQuestValid;
+    private string ReQuestValid
+    {
+        get { return reQuestValid; }
+        set { reQuestValid = value; }
+    }
+
     public string dbClientAction;
     private string DbClientAction
     {

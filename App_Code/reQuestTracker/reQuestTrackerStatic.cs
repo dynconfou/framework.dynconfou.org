@@ -21,9 +21,14 @@ public class reQuestTrackerStatic
     public string reQuestDateTime = "ReQuestDateTime";
     public string reQuestDeny = "deny";
     public string reQuestAllow = "allow";
+    public string reQuestValid = "valid";
     public string frameworkRequestURLAuthRequired = "framework-request-url-authorization-required";
     public string frameworkRequestIPAddressAuthRequired = "framework-request-ipaddress-authorization-required";
-    public string frameworkRequestAgentAuthRequired = "framework-request-agent-authorization-required";        
+    public string frameworkRequestAgentAuthRequired = "framework-request-agent-authorization-required";
+    public string frameworkRequestURLAuthDenied = "framework-request-url-authorization-denied";
+    public string frameworkRequestIPAddressAuthDenied = "framework-request-ipaddress-authorization-denied";
+    public string frameworkRequestAgentAuthDenied = "framework-request-agent-authorization-denied";
+    
 
     public string frameworkRequestInit = "framework-request-init";
     private string FrameworkRequestInit
@@ -48,4 +53,6 @@ public class reQuestTrackerStatic
     public string authenticateUICSSIntegration = "authenticate-ui-css-integration";
     public string authenticateUICSSStructureIntegration = "authenticate-ui-css-structure-integration";
     public string authenticateUICSSThemeIntegration = "authenticate-ui-css-theme-integration";
+    /* return to sender */
+    public string returnToSender = "return-to-sender";
 }

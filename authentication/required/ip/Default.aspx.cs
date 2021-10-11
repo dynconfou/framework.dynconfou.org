@@ -5,99 +5,168 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
+using System.Collections.Specialized;
 
 public partial class authentication_required_ip_Default : System.Web.UI.Page
 {
     protected string thisPageURL = HttpContext.Current.Request.Url.ToString();
     protected string requestURL, requestIP, requestClient;
-    /* logging event */
-    anyTrackerData obAnyTrackerData = new anyTrackerData();
-    anyTrackerAPI obAnyTrackerAPI = new anyTrackerAPI();
-    SortedDictionary<string, string> obTrackerValue = new SortedDictionary<string, string>();
+    private NameValueCollection iFormData = HttpContext.Current.Request.Form;
+    private NameValueCollection iData = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+
+    /* requestInit objects */
+    reQuestTrackerAPI obReQuestTrackerAPI = new reQuestTrackerAPI();
+    reQuestTrackerData obReQuestTrackerData = new reQuestTrackerData();
+    reQuestTrackerStatic obReQuestTrackerStatic = new reQuestTrackerStatic();
+
+    SortedDictionary<string, string> obReQuestTrackerValue = new SortedDictionary<string, string>();
+
+    /* authentication required object */
+    authenticationRequiredStatic obAuthenticationRequiredStatic = new authenticationRequiredStatic();
+    authenticationRequiredAPI obAuthenticationRequiredAPI = new authenticationRequiredAPI();
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (iData.Count == 0 && iFormData.Count != 0)
+        {
+            iData = iFormData;
+        }
+
         /* requestor init */
-        requestInitAPI requestInitAPI = new requestInitAPI();
-        requestInitData requestInitData = new requestInitData();
-        requestInitAPI.getInitData(HttpContext.Current, requestInitData);
+        obReQuestTrackerAPI.getInitData(HttpContext.Current, obReQuestTrackerData);
 
-        /* agent objects */
-        agentAPI obAgentAPI = new agentAPI();
-        agentData obAgentData = new agentData();
+        /* set default working values */
+        requestURL = obReQuestTrackerData.reQuestURL;
+        requestIP = obReQuestTrackerData.reQuestIP;
+        requestClient = obReQuestTrackerData.reQuestClient;
 
+        /* if rGUID missing - invalid request - return to sender */
+        if (iData["rGuid"] == null)
+        {
+            /* log invalid request - block IP */
+            logInvalidRequestBlockIP(obAuthenticationRequiredStatic.ipRGuidNullIPBlocked);
+            /* log return to sender */
+            logReturnToSender(obAuthenticationRequiredStatic.ipRGuidNull);
+            /* return to sender */
+            obAuthenticationRequiredAPI.reTurnToSender(requestIP);
+        }
+        else if (requestURL == "na")
+        {
+            /* log invalid request - block IP */
+            logInvalidRequestBlockIP(obAuthenticationRequiredStatic.ipRequestURLNAIPBlocked);
+            /* log return to sender */
+            logReturnToSender(obAuthenticationRequiredStatic.ipRequestURLNA);
+            /* return to sender */
+            obAuthenticationRequiredAPI.reTurnToSender(requestIP);
+        }
+        /* if verified rGUID exist - valid request - process finale */
+        else if (iData["rGuid"].ToString().Length == 36)
+        {
+            /* validate reQuestGUID */
+            obReQuestTrackerData.reQuestGUID = iData["rGuid"].ToString();
+            obReQuestTrackerAPI.validateReQuestTracker(obReQuestTrackerData);
+            if (obReQuestTrackerData.reQuestValid == obReQuestTrackerStatic.reQuestValid)
+            {
+                logValidError(obAuthenticationRequiredStatic.ipRGuidValid);
+                form1.Visible = true;
+            }
+            else
+            {
+                /* log invalid request - block IP */
+                logInvalidRequestBlockIP(obAuthenticationRequiredStatic.ipRGuidInvalidIPBlocked);
+                /* log return to sender */
+                logReturnToSender(obAuthenticationRequiredStatic.ipRGuidInvalid);
+                /* return to sender */
+                obAuthenticationRequiredAPI.reTurnToSender(requestIP);
+            }
+        }
+        else
+        {
+            /* log invalid request - block IP */
+            logInvalidRequestBlockIP(obAuthenticationRequiredStatic.ipRGuidInvalidFormatIPBlocked);
+            /* log return to sender */
+            logReturnToSender(obAuthenticationRequiredStatic.ipRGuidInvalidFormat);
+            /* return to sender */
+            obAuthenticationRequiredAPI.reTurnToSender(requestIP);
+        }
+    }
+
+    public void logInvalidRequestBlockIP(string iTrackerName)
+    {
         /* ipAddress objects */
         ipAddressAPI obIPAddressAPI = new ipAddressAPI();
         ipAddressData obIPAddressData = new ipAddressData();
-
-        requestURL = requestInitData.requestURL;
-        requestIP = requestInitData.requestIP;
-        requestClient = requestInitData.requestClient;
-
-        /* setup logging value */
-        obTrackerValue.Clear();
-        obTrackerValue.Add(obAnyTrackerData.requestURL, requestURL);
-        obTrackerValue.Add(obAnyTrackerData.requestIP, requestIP);
-        obTrackerValue.Add(obAnyTrackerData.requestClient, requestClient);
-        obTrackerValue.Add(obAnyTrackerData.requestDateTime, DateTime.Now.ToString());
-
-        /* add logging data */
-        obAnyTrackerData.trackerName = thisPageURL;
-        obAnyTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obTrackerValue);
-        obAnyTrackerData.trackerCategory = obAnyTrackerData.apiRequestDeniedURL;
-        obAnyTrackerAPI.addTracker(obAnyTrackerData);
-
-        /* setup agent data */
-        obAgentData.agentName = requestClient;
-        obAgentData.agentAuthorization = "";
-        if (requestClient.Contains("headless"))
-        {
-            obAgentData.agentAuthorization = obAgentData.authDeny;
-        }
-        /* add agent data */
-        obAgentAPI.addAgent(obAgentData);
-
-        /* setup ipAddress data */
+        /* set ipAddress object data */
         obIPAddressData.ipAddress = requestIP;
-        obIPAddressData.ipAddressAuthorization = "";
-        if (requestClient.Contains("headless"))
-        {
-            obIPAddressData.ipAddressAuthorization = obIPAddressData.authDeny;
-        }
-        /* add ipAddress data */
-        obIPAddressAPI.addIPAddress(obIPAddressData);
+        obIPAddressData.ipAddressAuthorization = obIPAddressData.authDeny;
+        /* addupdate IP address */
+        obIPAddressAPI.addUpdateIPAddress(obIPAddressData);
 
-        /* setup agent authorization */
-        obAgentData.agentName = requestClient;
-        obAgentData.agentAuthorization = obAgentData.authAllow;
+        /* setup logging data */
+        obReQuestTrackerValue.Clear();
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, requestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, requestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, requestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
 
-        /* validate agent data */
-        obAgentAPI.validateAgent(obAgentData);
+        /* setup addReQuestTracker */
+        //obReQuestTrackerData.reQuestGUID = string.Empty;        
+        obReQuestTrackerData.trackerName = iTrackerName;
+        obReQuestTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obReQuestTrackerValue);
+        obReQuestTrackerData.trackerCategory = obReQuestTrackerStatic.frameworkRequestIPAddressAuthDenied;
+        obReQuestTrackerData.reQuestURL = requestURL;
+        obReQuestTrackerData.reQuestClient = requestClient;
+        obReQuestTrackerData.reQuestIP = requestIP;
+        //obReQuestTrackerData.reQuestAction = "";
+        obReQuestTrackerData.siteURL = thisPageURL;
 
-        /* check agent status: deny ip if agent status equals deny */
-        if (obAgentData.agentAuthorization == obAgentData.authDeny && obIPAddressData.ipAddressAuthorization != obIPAddressData.authDeny)
-        {
-            /* setup ipAddress:deny authorization */
-            /*
-            obIPAddressData.ipGuid - already set from addIPAddress 
-            */
-            obIPAddressData.ipAddressAuthorization = obIPAddressData.authDeny;
-
-            /* validate agent data */
-            obIPAddressAPI.updateIPAddress(obIPAddressData);
-
-            /* setup logging value */
-            obTrackerValue.Clear();
-            obTrackerValue.Add(obAnyTrackerData.requestURL, requestURL);
-            obTrackerValue.Add(obAnyTrackerData.requestIP, requestIP);
-            obTrackerValue.Add(obAnyTrackerData.requestClient, requestClient);
-            obTrackerValue.Add(obAnyTrackerData.requestDateTime, DateTime.Now.ToString());
-
-            /* add logging data */
-            obAnyTrackerData.trackerName = thisPageURL;
-            obAnyTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obTrackerValue);
-            obAnyTrackerData.trackerCategory = obAnyTrackerData.ipSetDeniedAgentDenied;
-            obAnyTrackerAPI.addTracker(obAnyTrackerData);
-        }
+        obReQuestTrackerAPI.addReQuestTracker(obReQuestTrackerData);
     }
+
+    private void logValidError(string iTrackerName)
+    {
+        /* setup logging data */
+        obReQuestTrackerValue.Clear();
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, requestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, requestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, requestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
+
+        /* setup addReQuestTracker */
+        //obReQuestTrackerData.reQuestGUID = string.Empty;        
+        obReQuestTrackerData.trackerName = iTrackerName;
+        obReQuestTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obReQuestTrackerValue);
+        obReQuestTrackerData.trackerCategory = obReQuestTrackerStatic.frameworkRequestIPAddressAuthDenied;
+        obReQuestTrackerData.reQuestURL = requestURL;
+        obReQuestTrackerData.reQuestClient = requestClient;
+        obReQuestTrackerData.reQuestIP = requestIP;
+        //obReQuestTrackerData.reQuestAction = "";
+        obReQuestTrackerData.siteURL = thisPageURL;
+
+        obReQuestTrackerAPI.addReQuestTracker(obReQuestTrackerData);
+    }
+
+    private void logReturnToSender(string iTrackerName)
+    {
+        /* setup logging data */
+        obReQuestTrackerValue.Clear();
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestURL, requestURL);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestIP, requestIP);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestClient, requestClient);
+        obReQuestTrackerValue.Add(obReQuestTrackerStatic.reQuestDateTime, DateTime.Now.ToString());
+
+        /* setup addReQuestTracker */
+        //obReQuestTrackerData.reQuestGUID = string.Empty;
+        obReQuestTrackerData.trackerName = iTrackerName;
+        obReQuestTrackerData.trackerValue = new JavaScriptSerializer().Serialize(obReQuestTrackerValue);
+        obReQuestTrackerData.trackerCategory = obReQuestTrackerStatic.returnToSender;
+        obReQuestTrackerData.reQuestURL = requestURL;
+        obReQuestTrackerData.reQuestClient = requestClient;
+        obReQuestTrackerData.reQuestIP = requestIP;
+        obReQuestTrackerData.reQuestAction = "http://" + requestIP + "?ReturnToSender=InvalidRequest";
+        obReQuestTrackerData.siteURL = thisPageURL;
+
+        obReQuestTrackerAPI.addReQuestTracker(obReQuestTrackerData);
+    }
+
 }

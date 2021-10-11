@@ -63,6 +63,7 @@ public class authenticate : IHttpHandler {
             "\r\n" + "IP: " + obReQuestTrackerData.reQuestIP +
             "\r\n" + "Client: " + obReQuestTrackerData.reQuestClient +
             "\r\n" + "Delivered: " + DateTime.Now +
+            "\r\n" + "Request Authentication: " + obReQuestTrackerData.reQuestGUID +
             "\r\n" + "*/" +
             "\r\n" +
             "\r\n" + contents);
