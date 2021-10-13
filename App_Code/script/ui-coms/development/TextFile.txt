@@ -1,6 +1,10 @@
 ﻿/* 
-	DCF COMS - sia@dynconfou.org
-	Build: b09052021-12:45
+DCF COMS - sia@dynconfou.org
+Build: b09052021-12:45
+
+-- Additional Credits --
+Javascript Minifier - https://www.toptal.com/developers/javascript-minifier/
+Dan's Tools - https://www.cleancss.com/javascript-obfuscate/
 */
 var ob_DcfComms = function(initData) {
     /*
@@ -109,9 +113,12 @@ var ob_DcfComms = function(initData) {
     
     _t.version = {
 	    release:{
-			date:'Sept 5th 2021',
-			time:'12:45',
+			date:'October 12th 2021',
+			time:'19:04',
 			zone:'Pacific'
+		},
+		request:{
+			authorization:'replaceAuthorization'
 		}
     }     
 

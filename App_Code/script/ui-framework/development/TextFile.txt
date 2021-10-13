@@ -1,6 +1,10 @@
 ﻿/* 
-	DCF JS Framework - sia@dynconfou.org
-	Build: b09052021-12:45
+DCF JS Framework - sia@dynconfou.org
+Build: b10122021-18:33
+
+-- Additional Credits --
+Javascript Minifier - https://www.toptal.com/developers/javascript-minifier/
+Dan's Tools - https://www.cleancss.com/javascript-obfuscate/
 */
 
 /** editable per application use : begin **/
@@ -1486,6 +1490,17 @@ var ob_DcfRegister = function(iData) {
             }
         }
     };
+
+	_t.version = {
+	    release:{
+			date:'October 12th 2021',
+			time:'18:33',
+			zone:'Pacific'
+		},
+		request:{
+			authorization:'replaceAuthorization'
+		}
+    }
 };
 
 /* main object */
@@ -1551,9 +1566,12 @@ var ob_Dcf = function() {
     _t.obDcfLoaded = obDcfLoaded.items();
     _t.version = {
 	    release:{
-			date:'Sept 5th 2021',
-			time:'12:42',
+			date:'October 12th 2021',
+			time:'18:36',
 			zone:'Pacific'
+		},
+		request:{
+			authorization:'replaceAuthorization'
 		}
     }
 };

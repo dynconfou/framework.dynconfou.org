@@ -52,7 +52,7 @@ public class authenticate : IHttpHandler {
 
         /* setup response */
         HttpContext.Current.Response.ContentType = "text/javascript";
-        string contents = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/"+upath) + "//" +fileName);        
+        string contents = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/"+upath) + "//" +fileName);
 
         HttpContext.Current.Response.Write(
             "/* " +
@@ -66,7 +66,7 @@ public class authenticate : IHttpHandler {
             "\r\n" + "Request Authentication: " + obReQuestTrackerData.reQuestGUID +
             "\r\n" + "*/" +
             "\r\n" +
-            "\r\n" + contents);
+            "\r\n" + contents.Replace("replaceAuthorization", obReQuestTrackerData.reQuestGUID));
         /* context.Response.WriteFile(context.Server.MapPath("~/"+upath) + "//" +fileName); */
 
         /* log success request */

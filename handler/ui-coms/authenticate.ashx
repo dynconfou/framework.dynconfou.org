@@ -66,7 +66,7 @@ public class authenticate : IHttpHandler {
             "\r\n" + "Request Authentication: " + obReQuestTrackerData.reQuestGUID +
             "\r\n" + "*/" +
             "\r\n" +
-            "\r\n" + contents);
+            "\r\n" + contents.Replace("replaceAuthorization", obReQuestTrackerData.reQuestGUID));
         /* context.Response.WriteFile(context.Server.MapPath("~/"+upath) + "//" +fileName); */
 
         /* log success request */
