@@ -49,6 +49,8 @@ public class reQuestTrackerStatic
     public string authenticateUICSSTheme = "authenticate-ui-css-theme";
     public string authenticateUIURLs = "authenticate-ui-urls";
     public string authenticateUIFramework = "authenticate-ui-framework";
+    public string authenticateUIModalScript = "authenticate-ui-modal-script";
+    public string authenticateUIModalTemplate = "authenticate-ui-modal-template";
     /* integration use */
     public string authenticateUICSSIntegration = "authenticate-ui-css-integration";
     public string authenticateUICSSStructureIntegration = "authenticate-ui-css-structure-integration";

@@ -36,7 +36,7 @@ public class authenticate : IHttpHandler {
         }
 
         /* auth init data */
-        obReQuestTrackerData.trackerName = obReQuestTrackerStatic.authenticateUIURLs;
+        obReQuestTrackerData.trackerName = obReQuestTrackerStatic.authenticateUIModalTemplate;
         obReQuestTrackerData.trackerCategory = obReQuestTrackerStatic.frameworkRequestInit;
         obReQuestTrackerData.siteURL = obReQuestTrackerData.reQuestURL;
         obReQuestTrackerData.siteAUTH = siteAuthorization;
