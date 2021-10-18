@@ -1,0 +1,355 @@
+﻿/* 
+DCF modal.script - sia@dynconfou.org
+Build: b10172045-21:49
+
+-- Additional Credits --
+Javascript Minifier - https://www.toptal.com/developers/javascript-minifier/
+Dan's Tools - https://www.cleancss.com/javascript-obfuscate/
+*/
+
+var ob_Modal = function() {
+    var _t = this;
+
+    _t.ids = {};
+
+    _t.identifiers = {
+        buttons: {
+            continue: {
+	            id:'modalBtnContinue',
+                text: 'Ok',
+                class: '',
+                disabled: ''
+            },
+            cancel: {
+	            id:'modalBtnCancel',
+                text: 'cancel',
+                class: '',
+                disabled: ''
+            }
+        },
+        modalcontent:{
+			class:''  
+        },
+        header: {
+            text: 'header',
+            type: '<h3>',
+            class: ''
+        },
+        subheader: {
+            text: 'sub header',
+            type: '<h6>',
+            class: ''
+        },
+        subheadericon:{
+	        class:'',
+	        headerclass:''
+        },
+        maintext: {
+            text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita quia unde esse sunt dolorem maxime, vel, temporibus veniam, dolore fugit voluptates consequatur iste. Odit adipisci, deleniti sunt eveniet excepturi totam officiis, architecto similique! Est, a ea! Maxime ipsam modi maiores quibusdam laboriosam nisi facere nulla qui recusandae. Et reiciendis, dolor possimus tempora quo voluptatibus est consequatur. Nobis eius aspernatur quaerat.',
+            type: '<p>',
+            class: ''
+        },
+        subtext: {
+            text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita quia unde esse sunt dolorem maxime, vel, temporibus veniam, dolore fugit voluptates consequatur iste. Odit adipisci, deleniti sunt eveniet excepturi totam officiis, architecto similique! Est, a ea! Maxime ipsam modi maiores quibusdam laboriosam nisi facere nulla qui recusandae. Et reiciendis, dolor possimus tempora quo voluptatibus est consequatur. Nobis eius aspernatur quaerat.',
+            type: '<p>',
+            class: ''
+        },
+        fieldsetitems: [],
+        fieldsetitemsclass: '',
+        fieldsetitemstextarea: [],
+        fieldsetitemstextareaclass: ''
+    }
+
+    var _helpers = {
+        body: ['body'],
+        noscroll: ['.', '#', 'noscroll'],
+        hidden: ['.', 'hidden'],
+        blur: ['.','blur'],
+        notempty: ['.','notempty']
+    }
+
+    var _fnInternal = {
+        showbusy: function(iData) {
+            /*			    	
+            	iData.headertext
+            	iData.headerclass
+            	iData.headertype
+            	iData.subheadericonclass
+            	iData.subheadertext
+            	iData.subheaderclass
+            	iData.subheadertype
+            	iData.maintext
+            	iData.maintextclass
+            	iData.modalcontentclass
+            */
+            switch (typeof(iData)) {
+                case 'undefined':
+                    iData = {};
+                    break;
+            }
+            /* reset */
+            obModal.events.resetidentifiers();
+            /* modal */
+            obModal.identifiers.header.text = (iData.headertext || 'Working')
+            obModal.identifiers.header.type = (iData.headertype || '<h3>');
+            obModal.identifiers.header.class = (iData.headerclass || 't-c');
+            obModal.identifiers.subheadericon.class = (iData.subheadericonclass || ' fas  fa-spinner  fa-spin  fa-3x  fa-fw');
+            obModal.identifiers.subheader.text = (iData.subheadertext || 'please wait...');
+            obModal.identifiers.subheader.class = (iData.subheaderclass || 't-c');
+            obModal.identifiers.subheader.type = (iData.subheadertype || '<h6>');
+            obModal.identifiers.maintext.class = (iData.maintextclass || '');
+            obModal.identifiers.maintext.text = (iData.maintext ||'');
+            obModal.identifiers.modalcontent.class = (iData.modalcontentclass || 't-c');
+            obModal.identifiers.buttons.cancel.class = '';
+            obModal.identifiers.buttons.cancel.text = 'close';
+			obModal.identifiers.buttons.cancel.class = _helpers.hidden[1];            
+            obModal.identifiers.buttons.continue.class = _helpers.hidden[1];            
+            obModal.updateUI();
+            obModal.disableUI();
+            obModal.events.showthis();
+        },
+        showfail: function(iData){
+	        /*			    	
+            	iData.headertext
+            	iData.headerclass
+            	iData.headertype
+            	iData.subheadericonclass
+            	iData.subheadertext
+            	iData.subheaderclass
+            	iData.subheadertype
+            	iData.maintext
+            	iData.mainclass
+            	iData.btncancelclass
+            	iData.btncanceltext
+            	iData.btncontinueclass
+            	iData.btncontinuetext
+            */
+			switch (typeof(iData)) {
+			    case 'undefined':
+			        iData = {};
+			        break;
+			}
+			/* reset */
+			obModal.events.resetidentifiers();
+			/* modal */
+			obModal.identifiers.header.text = (iData.headertext || 'Failed')
+			obModal.identifiers.header.type = (iData.headertype || '<h3>');
+			obModal.identifiers.header.class = (iData.headerclass || 't-c');
+			obModal.identifiers.subheadericon.class = (iData.subheadericonclass || ' far  fa-meh  fa-3x');
+			obModal.identifiers.subheader.text = (iData.subheadertext || 'update unsuccessful');
+			obModal.identifiers.subheader.class = (iData.subheaderclass || 't-c');
+			obModal.identifiers.subheader.type = (iData.subheadertype || '<h6>');
+			obModal.identifiers.maintext.text = (iData.maintext || 'if this continues, please contact support');
+			obModal.identifiers.maintext.class = (iData.mainclass || 't-c');
+			obModal.identifiers.modalcontent.class = (iData.modalcontentclass || 't-c');
+			obModal.identifiers.buttons.cancel.class = (iData.btncancelclass || '');
+			obModal.identifiers.buttons.cancel.text = (iData.btncanceltext || 'close');
+			obModal.identifiers.buttons.continue.class = (iData.btncontinueclass || _helpers.hidden[1]);
+			obModal.identifiers.buttons.continue.text = (iData.btncontinuetext || '');
+			obModal.updateUI();
+			obModal.events.showthis();
+        },
+        showother: function(iData){
+	        /*			    	
+            	iData.headertext
+            	iData.headerclass
+            	iData.headertype
+            	iData.subheadericonclass
+            	iData.subheadertext
+            	iData.subheaderclass
+            	iData.subheadertype
+            	iData.maintext
+            	iData.mainclass
+            	iData.btncancelclass
+            	iData.btncanceltext
+            	iData.btncontinueclass
+            	iData.btncontinuetext
+            */
+			switch (typeof(iData)) {
+			    case 'undefined':
+			        iData = {};
+			        break;
+			}
+			/* reset */
+			obModal.events.resetidentifiers();
+			/* modal */
+			obModal.identifiers.header.text = (iData.headertext || 'Other')
+			obModal.identifiers.header.type = (iData.headertype || '<h3>');
+			obModal.identifiers.header.class = (iData.headerclass || 't-c');
+			obModal.identifiers.subheadericon.class = (iData.subheadericonclass || _helpers.hidden[1]);
+			obModal.identifiers.subheader.text = (iData.subheadertext || 'other option');
+			obModal.identifiers.subheader.class = (iData.subheaderclass || 't-c');
+			obModal.identifiers.subheader.type = (iData.subheadertype || '<h6>');
+			obModal.identifiers.maintext.text = (iData.maintext || 'optional modal');
+			obModal.identifiers.maintext.class = (iData.mainclass || 't-c');
+			obModal.identifiers.modalcontent.class = (iData.modalcontentclass || 't-c');
+			obModal.identifiers.buttons.cancel.class = (iData.btncancelclass || '');
+			obModal.identifiers.buttons.cancel.text = (iData.btncanceltext || 'close');
+			obModal.identifiers.buttons.continue.class = (iData.btncontinueclass || _helpers.hidden[1]);
+			obModal.identifiers.buttons.continue.text = (iData.btncontinuetext || '');
+			obModal.updateUI();
+			obModal.events.showthis();
+        },
+        resetidentifiers: function() {
+            _t.identifiers = {
+                buttons: {
+		            continue: {
+			            id:'modalBtnContinue',
+		                text: 'Ok',
+		                class: '',
+		                disabled: ''
+		            },
+		            cancel: {
+			            id:'modalBtnCancel',
+		                text: 'cancel',
+		                class: '',
+		                disabled: ''
+		            }
+		        },
+		        modalcontent:{
+					class:''  
+		        },
+		        header: {
+		            text: 'header',
+		            type: '<h3>',
+		            class: ''
+		        },
+		        subheader: {
+		            text: 'sub header',
+		            type: '<h6>',
+		            class: ''
+		        },
+		        subheadericon:{
+			        class:'',
+			        headerclass:''
+		        },
+		        maintext: {
+		            text: '',
+		            type: '<p>',
+		            class: ''
+		        },
+		        subtext: {
+		            text: '',
+		            type: '<p>',
+		            class: ''
+		        },
+		        fieldsetitems: [],
+		        fieldsetitemsclass: '',
+		        fieldsetitemstextarea: [],
+		        fieldsetitemstextareaclass: ''
+            }
+        },
+        resetevents: function(){
+	        _t.events.onClick = '';
+		    _t.events.onShow = '';
+        },
+        inputclicked: function(e) {
+            switch (typeof _t.events.onClick) {
+                case 'function':
+                    _t.events.onClick(e);
+                    _t.events.onClick = '';
+                    break;
+            };
+        },
+        inputchanged: function(e) {
+            switch (e.currentTarget.value.length) {
+                case 0:
+                    e.currentTarget.classList.remove(_helpers.notempty[1]);
+                    break;
+                default:
+                    e.currentTarget.classList.add(_helpers.notempty[1]);
+                    break;
+            }
+            if (_t.events.onInputChange != undefined) {
+                _t.events.onInputChange(e);
+            }
+        },
+        closethis: function(e) {
+            obModal.currentUI().addClass(_helpers.hidden[1]);
+            /* onClose */
+            switch (typeof _t.events.onClose) {
+                case 'function':
+                    _t.events.onClose(e);
+                    _t.events.onClose = '';
+                    break;
+            };
+            $(_helpers.body[0]).removeClass(_helpers.noscroll[2]);
+            /* set blur effect */
+// 			$(_helpers.body[0]).children().removeClass(_helpers.blur);
+        },
+        showthis: function(e) {
+            obModal.currentUI().removeClass(_helpers.hidden[1]);
+            /* onShow */
+            switch (typeof _t.events.onShow) {
+                case 'function':
+                    _t.events.onShow(e);
+                    _t.events.onShow = '';
+                    break;
+            };
+            $(_helpers.body[0]).addClass(_helpers.noscroll[2]);
+            /* set blur effect */
+// 	        $(_helpers.body[0]).children().addClass(_helpers.blur);
+// 	        $(['#',obModal.ids.templateID].join('')).removeClass(_helpers.blur);
+        },
+        savethis: function(e) {
+            obModal.currentUI().addClass(_helpers.hidden[1]);
+            /* onSave */
+            switch (typeof _t.events.onSave) {
+                case 'function':
+                    _t.events.onSave(e);
+                    _t.events.onSave = '';
+                    break;
+            };
+            $(_helpers.body[0]).removeClass(_helpers.noscroll[2]);
+        }
+    }
+
+    _t.events = {
+        showbusy: function(iData) {
+            _fnInternal.showbusy(iData);
+        },
+        showfail: function(iData){
+	        _fnInternal.showfail(iData);
+        },
+        showother: function(iData){
+	        _fnInternal.showother(iData);
+        },
+        resetidentifiers: function() {
+            _fnInternal.resetidentifiers();
+        },
+        resetevents: function(){
+	        _fnInternal.resetevents();
+        },
+        inputchanged: function(e) {
+            _fnInternal.inputchanged(e);
+        },
+        inputclicked: function(e) {
+            _fnInternal.inputclicked(e);
+        },
+        closethis: function(e) {
+            _fnInternal.closethis(e);
+        },
+        showthis: function(e) {
+            _fnInternal.showthis(e);
+        },
+        savethis: function(e) {
+            _fnInternal.savethis(e);
+        },
+        onClose: '',
+        onShow: '',
+        onSave: ''
+    }
+    
+	_t.version = {
+	    release:{
+			date:'October 17th 2021',
+			time:'20:45',
+			zone:'Pacific'
+		},
+		request:{
+			authorization:'replaceAuthorization'
+		}
+    }    
+}
+
+var obModal = new ob_Modal();

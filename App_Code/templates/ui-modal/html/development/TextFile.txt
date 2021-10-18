@@ -1,0 +1,79 @@
+﻿<overlay class="hidden" authentication="replaceAuthorization">
+	replaceCredits
+	<modal>
+		<modalheader class="{{header.class}}">
+			<div>
+			{{header.type}} {{header.text}}
+			</div>
+		</modalheader>
+		<modalcontent class="{{modalcontent.class}}">
+			<div class="{{subheadericon.headerclass}}">
+				<div class="{{subheadericon.class}}"></div>
+			</div>
+			<div class="{{subheader.class}}">
+				{{subheader.type}} {{subheader.text}}
+			</div>
+			<div class="{{maintext.class}}">
+				{{maintext.type}} {{maintext.text}}
+			</div>
+			<div class="{{subtext.class}}">
+				{{subtext.type}} {{subtext.text}}
+			</div>
+			<div app-repeat="fieldsetitems" class="">
+				<div fx="form" class="{{fieldsetitemsclass}}">
+					{{fieldsetitems[fieldsetitems-index].h||''}}
+					<input 
+		            	id="{{fieldsetitems[fieldsetitems-index].id||''}}"
+			            class="app-modify-result {{fieldsetitems[fieldsetitems-index].inputclass||''}}" 
+			            app-modify-value="{{fieldsetitems[fieldsetitems-index].v.length}}" 
+			            {{fieldsetitems[fieldsetitems-index].o.inputchecked||''}} 
+			            app-modify-options="0:||default:notempty" 
+			            type="{{fieldsetitems[fieldsetitems-index].inputtype||'text'}}" 
+			            app-databind="fieldsetitems[fieldsetitems-index].v" 
+			            app-change="inputchanged" 
+			            app-click="inputclicked"
+			            app-validation-pattern="{{fieldsetitems[fieldsetitems-index].vp||''}}"
+			            value="{{fieldsetitems[fieldsetitems-index].v||''}}"
+			            itemindex="fieldsetitems-index">
+		            <label>{{fieldsetitems[fieldsetitems-index].n||''}}</label>
+		            {{fieldsetitems[fieldsetitems-index].f||''}}
+				</div>				
+			</div>
+			<div role="" app-repeat="fieldsetitemstextarea" class="">
+				<div fx="form" class="{{fieldsetitemstextareaclass}}">
+					{{fieldsetitemstextarea[fieldsetitemstextarea-index].h||''}}
+					<textarea 
+		            	id="{{fieldsetitemstextarea[fieldsetitemstextarea-index].id||''}}"
+			            class="app-modify-result {{fieldsetitemstextarea[fieldsetitemstextarea-index].inputclass||''}}" 
+			            app-modify-value="{{fieldsetitemstextarea[fieldsetitemstextarea-index].v.length}}" 
+			            {{fieldsetitemstextarea[fieldsetitemstextarea-index].o.inputchecked||''}} 
+			            app-modify-options="0:||default:notempty" 
+			            type="{{fieldsetitemstextarea[fieldsetitemstextarea-index].inputtype||'text'}}" 
+			            app-databind="fieldsetitemstextarea[fieldsetitemstextarea-index].v" 
+			            app-change="inputchanged" 
+			            app-click="inputclicked"
+			            app-validation-pattern="{{fieldsetitemstextarea[fieldsetitemstextarea-index].vp||''}}"
+			            itemindex="fieldsetitemstextarea-index">{{fieldsetitemstextarea[fieldsetitemstextarea-index].v||''}}</textarea>
+		            <label>{{fieldsetitemstextarea[fieldsetitemstextarea-index].n||''}}</label>
+		            {{fieldsetitemstextarea[fieldsetitemstextarea-index].f||''}}
+				</div>
+			</div>
+		</modalcontent>
+		<modalfooter grid="active">
+			<div class="w-100 t-c">
+				<button 
+					id="{{buttons.cancel.id}}"
+					{{buttons.cancel.disabled}}
+					action="cancel" 
+					app-click="closethis" 
+					class="m-10 {{buttons.cancel.class}}">{{buttons.cancel.text}}</button>
+				<button 
+					id="{{buttons.continue.id}}"
+					{{buttons.continue.disabled}}
+					action="submit" 
+					app-click="savethis" 
+					class="m-10 {{buttons.continue.class}}">{{buttons.continue.text}}</button>				
+			</div>				
+		</modalfooter>
+	</modal>
+</overlay>

@@ -1,6 +1,6 @@
 ﻿/*
 DCF JS URLs - sia@dynconfou.org
-Build: b10122021-18:31
+Build: b10172021-19:52
 
 -- Additional Credits --
 Javascript Minifier - https://www.toptal.com/developers/javascript-minifier/
@@ -10,39 +10,50 @@ Dan's Tools - https://www.cleancss.com/javascript-obfuscate/
 /* url object for ui components and controls - html & js & styles */
 var ob_DcfUrls = function() {
     var _t = this;
+
+	_t.site = {
+		origin:window.location.origin
+	}
     
     _t.library = {
 	    origin:'https://library.dynconfou.org'
     }
 
+	_t.framework = {
+		origin:'https://framework.dynconfou.org'
+	}
+
     var _private = {
         baseurl: {
-            components: window.location.origin + '/overview/components/',
-            controls: window.location.origin + '/overview/controls/',
+            components: [_t.site.origin, '/'].join(''),
+            controls: [_t.site.origin, '/'].join(''),
             pages: '/'
         },
-        liburl:{
-	        components: _t.library.origin +'/dcf/components/',
-            controls: _t.library.origin + '/dcf/controls/',
-            pages: '/'
+        libraryURL:{
+	        components: [_t.library.origin, '/'].join(''),
+            controls: [_t.library.origin, '/'].join('')
         },
-        actionsurl: {
-            actions: window.location.origin + '/overview/app/actions/',
-            pages: '/'
-        }
+		frameworkURL:{
+			components: [_t.framework.origin, '/handler/'].join(''),
+			controls: [_t.framework.origin, '/handler/'].join('')
+		}
     }
 
     _t.items = {	 
 		global:{
 			modal: {
-                template: _private.liburl.controls + 'modal/modal.template.html',
-                script: _private.liburl.controls + 'modal/modal.script.js'
+                template: [_private.frameworkURL.controls, 'ui-modal', '/', 'modal.template.ashx'].join(''),
+                script: [_private.frameworkURL.controls, 'ui-modal', '/', 'modal.script.ashx'].join('')
             }
 		},		
 		components:{
+			header:{
+				template:'',
+				script:''
+			},
 			footer:{
-                template: _private.baseurl.components + 'footer/footer.template.html',
-                script: _private.baseurl.components + 'footer/footer.script.js'												
+                template: [_private.baseurl.components, 'footer', '/', 'footer.template.html'].join(''),
+                script: [_private.baseurl.components, 'footer', '/', 'footer.script.js'].join('')
 			}
 		}
     }
@@ -64,8 +75,8 @@ var ob_DcfUrls = function() {
 
 	_t.version = {
 	    release:{
-			date:'October 12th 2021',
-			time:'18:31',
+			date:'October 17th 2021',
+			time:'19:52',
 			zone:'Pacific'
 		},
 		request:{
