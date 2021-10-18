@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-<head runat="server" visible="true">
+<%--<head runat="server" visible="true">
     <style>
 		body {
 	    	font-family: verdana;
@@ -18,9 +18,9 @@
 	    }							
 	</style>
 </head>
-<body runat="server" visible="true"></body>
+<body runat="server" visible="true"></body>--%>
 
-<%--<head runat="server" visible="false">
+<head runat="server" visible="true">
     <title></title>
     <style>
 		body {
@@ -46,7 +46,8 @@
 	<!-- 	DCF:Framework -->
 	<script src="/handler/ui-framework/authenticate.ashx" type="text/javascript"></script>
 </head>
-<body role="content" runat="server" visible="false">
+<body role="content" runat="server" visible="true">
+    <modal></modal>
 
     <script>
         /* load complete */
@@ -60,8 +61,8 @@
         }
 
         /* setup modal */
-        dcf.urls.items.global.modal.template = '/handler/ui-modal/modal.template.ashx';
-        dcf.urls.items.global.modal.script = '/handler/ui-modal/modal.script.ashx';
+        dcf.urls.items.global.modal.template = ['', 'handler', 'ui-modal', 'modal.template.ashx'].join('/');
+        dcf.urls.items.global.modal.script = ['', 'handler', 'ui-modal', 'modal.script.ashx'].join('/');
 
         /* modal */
         dcf.require('modal').load(function (data) {
@@ -69,8 +70,7 @@
             $('modal').replaceWith(obModal.buildUI());
             obModal.initUI();
             _loadComplete();
-        });
-    </script>
-    <modal></modal>
-</body>--%>
+        });                        
+    </script>    
+</body>
 </html>
