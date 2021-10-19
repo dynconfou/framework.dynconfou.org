@@ -18,6 +18,6 @@ public class authenticationRequiredAPI
     public void reTurnToSender(string iRequestIP)
     {
         /* if un-verified rGUID provided - invalid request - return to sender for notification or processing - visibility to the client */
-        HttpContext.Current.Response.Redirect("http://" + iRequestIP + "?ReturnToSender=InvalidRequest");
+        //HttpContext.Current.Response.Redirect("http://" + iRequestIP + "?ReturnToSender=InvalidRequest");
     }
 }
